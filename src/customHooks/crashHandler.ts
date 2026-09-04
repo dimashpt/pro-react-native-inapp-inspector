@@ -123,19 +123,6 @@ export const recordNetworkBreadcrumb = (
   );
 };
 
-export const recordReduxBreadcrumb = (
-  actionType: string,
-  payload?: any,
-): void => {
-  addCrashBreadcrumb('redux', t('crash.breadcrumbAction', {actionType}), {
-    type: actionType,
-    payloadSummary:
-      typeof payload === 'object' && payload !== null
-        ? Object.keys(payload)
-        : typeof payload,
-  });
-};
-
 export const recordUserActionBreadcrumb = (
   action: string,
   metadata?: any,

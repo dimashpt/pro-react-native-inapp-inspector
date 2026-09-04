@@ -1,6 +1,6 @@
 {
   "name": "react-native-inapp-inspector",
-  "version": "2.3.14",
+  "version": "2.3.17",
   "description": "The zero-config, all-in-one in-app debugger for React Native & Expo. Inspect Network (fetch/axios), Console logs, Stack Traces, Redux State, Firebase Analytics, and JS Bundle size directly on device.",
   "repository": {
     "type": "git",
@@ -30,13 +30,6 @@
       "import": "./dist/esm/network.js",
       "require": "./dist/commonjs/network.js",
       "default": "./dist/commonjs/network.js"
-    },
-    "./redux": {
-      "react-native": "./dist/commonjs/redux.js",
-      "types": "./dist/commonjs/redux.d.ts",
-      "import": "./dist/esm/redux.js",
-      "require": "./dist/commonjs/redux.js",
-      "default": "./dist/commonjs/redux.js"
     },
     "./console": {
       "react-native": "./dist/commonjs/console.js",
@@ -140,8 +133,6 @@
     "http-logger",
     "api-inspector",
     "console-logger",
-    "redux-inspector",
-    "redux-logger",
     "analytics-logger",
     "bundle-visualizer",
     "hermes",
@@ -165,7 +156,6 @@
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-native": ">=0.60.0",
-    "react-native-linear-gradient": ">=2.0.0",
     "react-native-svg": ">=12.0.0"
   },
   "peerDependenciesMeta": {
@@ -182,7 +172,6 @@
     "react": "19.1.0",
     "react-native": "0.81.4",
     "react-native-bundle-visualizer": "4.0.0",
-    "react-native-linear-gradient": "2.8.3",
     "react-native-svg": "15.14.0",
     "typescript": "5.8.3"
   },

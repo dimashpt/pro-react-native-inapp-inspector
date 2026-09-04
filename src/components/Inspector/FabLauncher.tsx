@@ -1,6 +1,5 @@
 import React from 'react';
 import {Animated, View} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import {useInspector} from './InspectorContext';
 import TouchableScale from '../TouchableScale';
 import BrandCircleIcon from '../BrandCircleIcon';
@@ -52,15 +51,12 @@ const FabLauncher = () => {
                 ],
               },
             ]}>
-            <LinearGradient
-              colors={[
-                `${AppColors.white}00`,
-                `${AppColors.white}8C`,
-                `${AppColors.white}00`,
-              ]}
-              start={{x: 0, y: 0.5}}
-              end={{x: 1, y: 0.5}}
-              style={{flex: 1}}
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: `${AppColors.white}35`,
+                borderRadius: 13,
+              }}
             />
           </Animated.View>
         </View>

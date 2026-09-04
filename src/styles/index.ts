@@ -1384,6 +1384,7 @@ export const getRawStyles = (colors: typeof AppColors) => ({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     overflow: 'hidden',
+    backgroundColor: colors.indigo600,
   },
 
   // Status chip used in MetaAccordion

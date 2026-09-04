@@ -19,8 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - The header clear-everything button now uses a wipe (broom) icon instead of the delete/trash icon.
 - The scroll-to-top button is now always visible, anchored at the bottom right of the APIs list (bottom: 10, right: 10).
-- `connectReduxStore` is now idempotent (safe to call twice), de-duplicates with the middleware, and diffs state on `store.subscribe` so changes dispatched outside the wrapped dispatch (thunk/saga internals) no longer desync the state tree and timeline.
 
+
+### Removed
+- Removed Redux logger implementation, ReduxTab, ReduxDetail, Redux middleware, and `./redux` submodule.
+- Removed `react-native-linear-gradient` dependency; replaced with React Native `View` to reduce dependencies and simplify installation.
 ### Fixed
 - TypeScript build errors from spreading `StyleSheet.absoluteFill` (now `absoluteFillObject`).
 

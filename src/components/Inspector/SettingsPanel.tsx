@@ -27,7 +27,6 @@ import {clearAnalyticsEvents} from '../../customHooks/analyticsLogger';
 import {clearCrashRecords} from '../../customHooks/crashHandler';
 import {clearCachedBundleAnalysis} from '../../customHooks/bundleAnalyzer';
 import {clearPerformanceEvents} from '../../customHooks/performanceTracker';
-import {isReduxConnected} from '../../customHooks/reduxLogger';
 import {isAnalyticsConnected} from '../../customHooks/analyticsLogger';
 import {useTranslation} from '../../i18n';
 import {ActiveTab} from '../../types';
@@ -45,7 +44,6 @@ import {
   CheckIcon,
   TrashIcon,
   PackageIcon,
-  ReduxIcon,
   PerformanceIcon,
   CrashIcon,
   ShieldAlertIcon,
@@ -91,7 +89,6 @@ const SettingsPanel = () => {
     logs,
     consoleLogs,
     analyticsEvents,
-    reduxState,
     maxNetworkLogs,
     setMaxNetworkLogs,
     maxConsoleLogs,
@@ -101,14 +98,9 @@ const SettingsPanel = () => {
     isAutoRamLimitEnabled,
     setIsAutoRamLimitEnabled,
     deviceFreeRamMb,
-    reduxAutoRefresh,
-    setReduxAutoRefreshState,
-    reduxExpandDepth,
-    setReduxExpandDepth,
     switchActiveTab,
     setSelected,
     setSelectedEvent,
-    setReduxState,
     crashRecords,
     maxCrashLogs,
     setMaxCrashLogs,
@@ -178,13 +170,6 @@ const SettingsPanel = () => {
             desc: 'Firebase & custom analytics events, user properties & params',
           },
           {
-            key: 'redux',
-            label: 'Redux Inspector',
-            category: 'telemetry',
-            icon: 'redux',
-            desc: 'Store state diffing, action history & reducer timeline',
-          },
-          {
             key: 'device',
             label: 'Device Info',
             category: 'diagnostic',
@@ -221,7 +206,6 @@ const SettingsPanel = () => {
     apis: true,
     logs: Boolean(tabVisibility?.logs),
     analytics: Boolean(tabVisibility?.analytics),
-    redux: Boolean(tabVisibility?.redux),
     bundle: Boolean(tabVisibility?.bundle),
     performance: Boolean(tabVisibility?.performance),
     crash: Boolean(tabVisibility?.crash),
@@ -236,7 +220,6 @@ const SettingsPanel = () => {
       apis: true,
       logs: Boolean(tabVisibility?.logs),
       analytics: Boolean(tabVisibility?.analytics),
-      redux: Boolean(tabVisibility?.redux),
       bundle: Boolean(tabVisibility?.bundle),
       performance: Boolean(tabVisibility?.performance),
       crash: Boolean(tabVisibility?.crash),
@@ -591,11 +574,9 @@ const SettingsPanel = () => {
             {/* Individual Module Cards with Left Checkboxes */}
             <View style={{gap: 10}}>
               {allModules.map(moduleItem => {
-                const isReduxAvail = isReduxConnected();
                 const isAnalyticsAvail = isAnalyticsConnected();
                 const isUnavailable =
-                  (moduleItem.key === 'redux' && !isReduxAvail) ||
-                  (moduleItem.key === 'analytics' && !isAnalyticsAvail);
+                  moduleItem.key === 'analytics' && !isAnalyticsAvail;
                 const isLocked = moduleItem.key === 'apis' || isUnavailable;
                 const isChecked =
                   moduleItem.key === 'apis' ||
@@ -619,10 +600,6 @@ const SettingsPanel = () => {
                       } crashes recorded • Crash Guard`
                     : moduleItem.key === 'analytics'
                     ? `${analyticsEvents.length} events logged`
-                    : moduleItem.key === 'redux'
-                    ? `${
-                        Object.keys(reduxState || {}).length
-                      } slices • Depth: ${reduxExpandDepth}`
                     : '';
 
                 return (
@@ -813,16 +790,6 @@ const SettingsPanel = () => {
                               size={16}
                             />
                           )}
-                          {moduleItem.icon === 'redux' && (
-                            <ReduxIcon
-                              color={
-                                isChecked
-                                  ? AppColors.purple
-                                  : AppColors.grayTextWeak
-                              }
-                              size={16}
-                            />
-                          )}
                           {moduleItem.icon === 'device' && (
                             <SmartphoneIcon
                               color={
@@ -952,9 +919,7 @@ const SettingsPanel = () => {
                                     color: AppColors.amber700,
                                     letterSpacing: 0.3,
                                   }}>
-                                  {moduleItem.key === 'redux'
-                                    ? t('settings.notConnectedBadge')
-                                    : t('settings.notDetectedBadge')}
+                                  {t('settings.notDetectedBadge')}
                                 </Text>
                               </View>
                             ) : isChecked ? (
@@ -2815,114 +2780,6 @@ const SettingsPanel = () => {
               Alert.alert(
                 t('common.success'),
                 t('settings.analytics.analyticsEventsCleared'),
-              );
-            },
-            right: (
-              <View
-                style={{
-                  paddingHorizontal: 12,
-                  paddingVertical: 6,
-                  borderRadius: 8,
-                  backgroundColor: `${AppColors.errorColor}14`,
-                  borderWidth: 1,
-                  borderColor: `${AppColors.errorColor}33`,
-                }}>
-                <Text
-                  style={{
-                    fontFamily: AppFonts.interBold,
-                    fontSize: 11,
-                    lineHeight: 14,
-                    color: AppColors.errorColor,
-                  }}>
-                  {t('common.clear')}
-                </Text>
-              </View>
-            ),
-          })}
-        </View>
-        <View style={{height: 48}} />
-      </ScrollView>
-    );
-  } else if (settingsPage === 'redux') {
-    title = t('settings.redux.title');
-    icon = <ReduxIcon color={AppColors.white} size={16} />;
-    rightInfo = t('settings.redux.reducers', {
-      count: Object.keys(reduxState || {}).length,
-    });
-    content = (
-      <ScrollView
-        style={{flex: 1}}
-        contentContainerStyle={{padding: 16, paddingBottom: 100, gap: 12}}>
-        <View
-          style={{
-            backgroundColor: AppColors.primaryLight,
-            padding: 16,
-            borderRadius: 14,
-            borderWidth: 1,
-            borderColor: AppColors.grayBorderSecondary,
-            gap: 4,
-          }}>
-          {renderSettingRow({
-            icon: <ReduxIcon color={AppColors.purple} size={16} />,
-            label: t('settings.redux.autoRefresh'),
-            description: t('settings.redux.autoRefreshDescription'),
-            onPress: () => setReduxAutoRefreshState(prev => !prev),
-            right: (
-              <View
-                style={{
-                  width: 22,
-                  height: 22,
-                  borderRadius: 6,
-                  borderWidth: 2,
-                  borderColor: reduxAutoRefresh
-                    ? AppColors.purple
-                    : AppColors.grayTextWeak,
-                  backgroundColor: reduxAutoRefresh
-                    ? `${AppColors.purple}1A`
-                    : 'transparent',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                {reduxAutoRefresh && (
-                  <CheckIcon size={12} color={AppColors.purple} />
-                )}
-              </View>
-            ),
-          })}
-          <View style={{height: 1, backgroundColor: AppColors.dividerColor}} />
-          {renderSettingRow({
-            icon: <LayersIcon color={AppColors.purple} size={16} />,
-            label: t('settings.redux.defaultJsonExpandDepth'),
-            description: t('settings.redux.defaultJsonExpandDepthDescription'),
-            picker: {
-              options: [1, 2, 3, 5] as const,
-              selectedValue: reduxExpandDepth,
-              onSelect: setReduxExpandDepth,
-            },
-            isLast: true,
-          })}
-        </View>
-
-        <View
-          style={{
-            backgroundColor: AppColors.primaryLight,
-            borderRadius: 14,
-            borderWidth: 1,
-            borderColor: AppColors.grayBorderSecondary,
-            padding: 16,
-          }}>
-          {renderSettingRow({
-            icon: <TrashIcon color={AppColors.errorColor} size={16} />,
-            label: t('settings.redux.clearReduxState'),
-            description: reduxState
-              ? t('settings.redux.clearReduxStateDescription')
-              : t('settings.redux.clearReduxStateEmpty'),
-            isLast: true,
-            onPress: () => {
-              setReduxState(null);
-              Alert.alert(
-                t('common.success'),
-                t('settings.redux.reduxStateCleared'),
               );
             },
             right: (

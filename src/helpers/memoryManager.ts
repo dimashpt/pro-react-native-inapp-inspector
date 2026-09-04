@@ -1,7 +1,6 @@
 import {AppState, NativeEventSubscription, Platform} from 'react-native';
 import {pruneNetworkLogs} from '../customHooks/networkLogger';
 import {pruneConsoleLogs} from '../customHooks/consoleLogger';
-import {pruneReduxHistory} from '../customHooks/reduxLogger';
 import {pruneAnalyticsLogs} from '../customHooks/analyticsLogger';
 import {pruneCrashRecords, addCrashBreadcrumb} from '../customHooks/crashHandler';
 import {prunePerformanceEvents} from '../customHooks/performanceTracker';
@@ -11,7 +10,6 @@ export interface MemoryPruneSummary {
   timestamp: number;
   prunedNetwork: number;
   prunedConsole: number;
-  prunedRedux: number;
   prunedAnalytics: number;
   prunedCrashes: number;
   prunedPerformance: number;
@@ -38,7 +36,6 @@ export const pruneAllLogs = (
 
   const prunedNetwork = pruneNetworkLogs(undefined);
   const prunedConsole = pruneConsoleLogs(undefined);
-  const prunedRedux = pruneReduxHistory(undefined);
   const prunedAnalytics = pruneAnalyticsLogs(undefined);
   const prunedCrashes = pruneCrashRecords(undefined);
   const prunedPerformance = prunePerformanceEvents(undefined);
@@ -46,7 +43,6 @@ export const pruneAllLogs = (
   const totalPruned =
     prunedNetwork +
     prunedConsole +
-    prunedRedux +
     prunedAnalytics +
     prunedCrashes +
     prunedPerformance;
@@ -64,7 +60,6 @@ export const pruneAllLogs = (
     timestamp: lastPruneTimestamp,
     prunedNetwork,
     prunedConsole,
-    prunedRedux,
     prunedAnalytics,
     prunedCrashes,
     prunedPerformance,

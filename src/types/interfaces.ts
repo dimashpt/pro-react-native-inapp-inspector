@@ -136,26 +136,6 @@ export interface RouteInfo {
   params: any;
 }
 
-// ─── Redux ────────────────────────────────────────────────────────────────────
-
-export interface ReduxHistoryEntry {
-  id: number;
-  type: string;
-  payload: any;
-  timestamp: string;
-  updatedAt?: number;
-  affectedSlices: string[];
-  prevState?: any;
-  nextState?: any;
-  stack?: string;
-  caller?: string;
-  callerFile?: string;
-  callerLine?: number;
-  callerCol?: number;
-  originType?: 'saga' | 'thunk' | 'ui' | 'direct' | 'listener';
-  sliceName?: string;
-}
-
 // ─── Settings persistence ─────────────────────────────────────────────────────
 
 export interface InspectorStorage {
@@ -176,8 +156,6 @@ export interface PersistedSettings {
   maxCrashLogs?: number;
   isAutoRamLimitEnabled?: boolean;
   showConsoleLevels?: {info: boolean; warn: boolean; error: boolean};
-  reduxAutoRefresh?: boolean;
-  reduxExpandDepth?: number;
   showDuplicateLogs?: boolean;
   showUpdateToast?: boolean;
   telemetryClientId?: string;
@@ -338,19 +316,6 @@ export interface InspectorContextValue {
   isAnalyticsPaused: boolean;
   setIsAnalyticsPaused: React.Dispatch<React.SetStateAction<boolean>>;
 
-  // ─── Redux ─────────────────────────────────────────────────────────────────
-  reduxState: any;
-  setReduxState: React.Dispatch<React.SetStateAction<any>>;
-  reduxLastActionMap: Record<string, any>;
-  reduxSearch: string;
-  setReduxSearch: React.Dispatch<React.SetStateAction<string>>;
-  selectedReduxSlice: string | null;
-  setSelectedReduxSlice: React.Dispatch<React.SetStateAction<string | null>>;
-  selectedReduxAction: any | null;
-  setSelectedReduxAction: React.Dispatch<React.SetStateAction<any | null>>;
-  reduxActiveSubTab: 'state' | 'timeline';
-  setReduxActiveSubTab: React.Dispatch<React.SetStateAction<'state' | 'timeline'>>;
-
   // ─── Crash ─────────────────────────────────────────────────────────────────
   crashRecords: CrashRecord[];
   setCrashRecords: React.Dispatch<React.SetStateAction<CrashRecord[]>>;
@@ -387,10 +352,6 @@ export interface InspectorContextValue {
   isAutoRamLimitEnabled: boolean;
   setIsAutoRamLimitEnabled: React.Dispatch<React.SetStateAction<boolean>>;
   deviceFreeRamMb: number;
-  reduxAutoRefresh: boolean;
-  setReduxAutoRefreshState: React.Dispatch<React.SetStateAction<boolean>>;
-  reduxExpandDepth: number;
-  setReduxExpandDepth: React.Dispatch<React.SetStateAction<number>>;
 }
 
 // ─── Shared component props ───────────────────────────────────────────────────

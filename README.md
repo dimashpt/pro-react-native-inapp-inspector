@@ -17,7 +17,7 @@
   <a href="https://github.com/vengatmacuser/react-native-inapp-inspector"><img src="https://img.shields.io/badge/TypeScript-Ready-3178c6" alt="TypeScript" /></a>
 </p>
 
-The **zero-config, all-in-one in-app debugging overlay for React Native & Expo**. Inspect network traffic (fetch/Axios), console logs with Metro symbolicated stack traces, Redux state diffs, Firebase Analytics events, and JavaScript bundle size directly on your device or simulator with zero native setup.
+The **zero-config, all-in-one in-app debugging overlay for React Native & Expo**. Inspect network traffic (fetch/Axios), console logs with Metro symbolicated stack traces, Firebase Analytics events, and JavaScript bundle size directly on your device or simulator with zero native setup.
 
 > 🚀 **The modern, lightweight alternative to Flipper and Chucker** — works standalone on device, in test builds, and across standalone APKs/IPAs without desktop companion apps, cables, or open debugger ports.
 
@@ -38,7 +38,6 @@ The **zero-config, all-in-one in-app debugging overlay for React Native & Expo**
 | **Network Inspector (Fetch & Axios)** | ✅ | ✅ | ✅ |
 | **cURL & Fetch Snippet Export** | ✅ | ❌ | ⚠️ |
 | **Console Logger + Stack Traces** | ✅ (Metro Symbolicated) | ❌ | ✅ |
-| **Redux State & Action Diffs** | ✅ | ❌ | ⚠️ |
 | **Firebase Analytics Tracker** | ✅ | ❌ | ❌ |
 | **JS Bundle Size & Hermes Analyzer** | ✅ | ❌ | ❌ |
 | **Live Traffic Stream Freeze** | ✅ | ❌ | ❌ |
@@ -57,7 +56,6 @@ The **zero-config, all-in-one in-app debugging overlay for React Native & Expo**
 | 🪵 **Console Logger & Stack Trace** | Captures `console.log`, `info`, `warn`, and `error`. Displays trigger file (`TSX`, `JSX`, `TS`, `JS`) & line numbers via **Metro Symbolication**, call stack frames, individual arguments inspection, and duplicate collapsing (`×N`). |
 | ⏸️ **Live Stream Pause / Resume** | Freeze incoming network requests, console logs, and analytics streams on the fly to inspect active traffic without list jumping. |
 | 📊 **Analytics Tracker** | Tracks manual events and auto-patches `@react-native-firebase/analytics` calls (`logEvent`, `logScreenView`, `setUserProperties`, and `setUserId`). |
-| 🔄 **Redux State & Actions** | Connects to Redux / Redux Toolkit. Inspect dispatched actions with deep state diffs, payload breakdown, slice state trees, and `redux-persist` metadata. |
 | 📦 **Bundle Visualizer** | In-app JavaScript bundle size breakdown, Hermes engine bytecode metrics, visual package treemap, and integrated `react-native-bundle-visualizer` CLI. |
 | 🛡️ **Error Boundary & Native Crash Catcher** | Built-in React `ErrorBoundary` and native exception/signal crash catcher emitting rich stack traces and device diagnostics. |
 
@@ -85,11 +83,11 @@ cd ios && pod install
 
 ### Expo Projects
 ```bash
-npx expo install react-native-inapp-inspector react-native-svg react-native-linear-gradient
+npx expo install react-native-inapp-inspector react-native-svg
 ```
 
 ### Dependencies
-The package requires React (`>=18.0.0`) and React Native (`>=0.60.0`) as peer dependencies and utilizes `@react-navigation/native`, `react-native-linear-gradient`, and `react-native-svg`.
+The package requires React (`>=18.0.0`) and React Native (`>=0.60.0`) as peer dependencies and utilizes `@react-navigation/native` and `react-native-svg`.
 
 *(Optional)* If you use `@react-native-clipboard/clipboard` in your project, the inspector automatically detects and utilizes native clipboard bridges for seamless emulator-to-host copying.
 
@@ -207,25 +205,6 @@ The APIs tab features:
 
 ---
 
-## 🔄 Redux State & Action Inspection
-
-Connect your Redux store once during application startup:
-
-```javascript
-import {configureStore} from '@reduxjs/toolkit';
-import {inspectorReduxMiddleware, connectReduxStore} from 'react-native-inapp-inspector';
-import rootReducer from './slices';
-
-const store = configureStore({
-  reducer: rootReducer,
-  middleware: getDefaultMiddleware =>
-    getDefaultMiddleware().concat(inspectorReduxMiddleware),
-});
-
-connectReduxStore(store);
-```
-
----
 
 ## 🧭 Navigation & Screen Tracking
 
@@ -273,8 +252,8 @@ If you wish to migrate the inspector's entire UI and data engine to **100% Nativ
 flowchart TB
     subgraph React Native / JavaScript Layer
         JS_App[Host React Native App]
-        JS_Bridge[Thin TS API: setupNetworkLogger / connectRedux / NativeInspector]
-        JS_App -->|Logs, Redux, Analytics| JS_Bridge
+        JS_Bridge[Thin TS API: setupNetworkLogger / NativeInspector]
+        JS_App -->|Logs, Analytics| JS_Bridge
     end
 
     subgraph Native iOS / Android Engine
@@ -321,7 +300,7 @@ flowchart TB
   ```
 
 #### Step 5: Preserve JavaScript Backwards Compatibility
-- Keep existing JS exports (`setupNetworkLogger`, `connectReduxStore`, `logAnalyticsEvent`, `<NetworkInspector />`).
+- Keep existing JS exports (`setupNetworkLogger`, `logAnalyticsEvent`, `<NetworkInspector />`).
 - The TS wrapper transparently forwards data into the native store:
   ```ts
   export const logAnalyticsEvent = (name: string, params?: Record<string, any>) => {
@@ -348,8 +327,6 @@ flowchart TB
 | `setupConsoleLogger()` | Function | Intercepts `console.log`, `info`, `warn`, and `error`. |
 | `clearConsoleLogs()` | Function | Clears captured console logs. |
 | `subscribeConsoleLogs(cb)` | Function | Subscribes to console log updates. |
-| `connectReduxStore(store)` | Function | Connects a Redux store for state and action inspection. |
-| `inspectorReduxMiddleware` | Middleware | Redux middleware for capturing thunks, sagas, and RTK Query actions. |
 | `setupAnalyticsLogger(instance)` | Function | Patches a Firebase Analytics instance. |
 | `logAnalyticsEvent(name, params?, userProps?)` | Function | Logs a manual analytics event. |
 | `ErrorBoundary` | Component | React error boundary component. |

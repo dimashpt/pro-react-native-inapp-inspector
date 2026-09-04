@@ -10,7 +10,6 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import {useInspector} from './InspectorContext';
 import TouchableScale from '../TouchableScale';
 import AppHeaderLogo from '../AppHeaderLogo';
@@ -53,12 +52,6 @@ const InspectorHeader = React.memo(() => {
     setSelectedEvent,
     selectedLog,
     setSelectedLog,
-    selectedReduxSlice,
-    setSelectedReduxSlice,
-    selectedReduxAction,
-    setSelectedReduxAction,
-    reduxState,
-    reduxLastActionMap,
     showHeaderInfo,
     setShowHeaderInfo,
     updateAvailable,
@@ -141,8 +134,6 @@ const InspectorHeader = React.memo(() => {
     (activeTab === 'apis' && selected != null) ||
     (activeTab === 'analytics' && selectedEvent != null) ||
     (activeTab === 'logs' && selectedLog != null) ||
-    (activeTab === 'redux' &&
-      (selectedReduxSlice != null || selectedReduxAction != null)) ||
     (activeTab === 'crash' && selectedCrash != null);
 
   const isSettingsView = settingsPage !== null;
@@ -162,8 +153,6 @@ const InspectorHeader = React.memo(() => {
         return 'Crash Protection';
       case 'analytics':
         return 'Analytics Logger';
-      case 'redux':
-        return 'Redux Inspector';
       default:
         return 'Settings & Modules';
     }
@@ -177,11 +166,7 @@ const InspectorHeader = React.memo(() => {
 
   return (
     <>
-      <LinearGradient
-        colors={['#4F46E5', '#7C3AED']}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 1}}
-        style={styles.headerGradient}>
+      <View style={styles.headerGradient}>
       <View style={{paddingTop: headerTopPadding, width: '100%'}}>
         <View
           style={[
@@ -217,8 +202,6 @@ const InspectorHeader = React.memo(() => {
                   setSelected(null);
                   setSelectedEvent(null);
                   setSelectedLog(null);
-                  setSelectedReduxSlice(null);
-                  setSelectedReduxAction(null);
                   setSelectedCrash(null);
                 });
               }}
@@ -705,139 +688,6 @@ const InspectorHeader = React.memo(() => {
                     </View>
                   </ScrollView>
                 </View>
-              ) : activeTab === 'redux' && selectedReduxSlice != null ? (
-                (() => {
-                  const sliceData = reduxState?.[selectedReduxSlice];
-                  const keyCount =
-                    sliceData && typeof sliceData === 'object'
-                      ? Object.keys(sliceData).length
-                      : typeof sliceData !== 'undefined'
-                      ? 1
-                      : 0;
-                  const sliceSize = getSize(sliceData);
-                  const lastAction = reduxLastActionMap[selectedReduxSlice];
-
-                  return (
-                    <View style={styles.headerDetailCenter}>
-                      <View style={styles.headerDetailRow}>
-                        <View
-                          style={[
-                            styles.headerMethodBadge,
-                            {
-                              backgroundColor: `${AppColors.purple}4D`,
-                              paddingHorizontal: isNarrow ? 5 : 6,
-                              paddingVertical: isNarrow ? 2 : 3,
-                            },
-                          ]}>
-                          <Text style={[styles.headerMethodText, {fontSize: isNarrow ? 9 : 10}]}>SLICE</Text>
-                        </View>
-                        <Text
-                          style={[styles.headerDetailTitle, {fontSize: isNarrow ? 13.5 : 15}]}
-                          numberOfLines={1}
-                          ellipsizeMode="middle">
-                          {selectedReduxSlice}
-                        </Text>
-                      </View>
-                      <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          gap: isNarrow ? 4 : 6,
-                          marginTop: 3,
-                          paddingVertical: 1,
-                        }}>
-                        <View
-                          style={[
-                            styles.headerStatusDot,
-                            {
-                              backgroundColor: AppColors.liveGreen,
-                              width: isNarrow ? 6 : 7,
-                              height: isNarrow ? 6 : 7,
-                            },
-                          ]}
-                        />
-                        <Text style={[styles.headerSubTitle, {fontSize: isNarrow ? 10 : 11}]}>Live</Text>
-                        <Text style={[styles.headerSubTitle, {opacity: 0.6, fontSize: isNarrow ? 10 : 11}]}>
-                          •
-                        </Text>
-                        <Text style={[styles.headerSubTitle, {fontSize: isNarrow ? 10 : 11}]}>
-                          {keyCount} keys
-                        </Text>
-                        <Text style={[styles.headerSubTitle, {opacity: 0.6, fontSize: isNarrow ? 10 : 11}]}>
-                          •
-                        </Text>
-                        <Text style={[styles.headerSubTitle, {fontSize: isNarrow ? 10 : 11}]}>{sliceSize}</Text>
-                        {lastAction?.timestamp && (
-                          <>
-                            <Text
-                              style={[styles.headerSubTitle, {opacity: 0.6, fontSize: isNarrow ? 10 : 11}]}>
-                              •
-                            </Text>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                gap: 3,
-                              }}>
-                              <ClockIcon color={AppColors.white} size={isNarrow ? 9 : 10} />
-                              <Text style={[styles.headerSubTitle, {fontSize: isNarrow ? 10 : 11}]}>
-                                {lastAction.timestamp}
-                              </Text>
-                            </View>
-                          </>
-                        )}
-                      </ScrollView>
-                    </View>
-                  );
-                })()
-              ) : activeTab === 'redux' && selectedReduxAction != null ? (
-                <View style={styles.headerDetailCenter}>
-                  <View style={styles.headerDetailRow}>
-                    <View
-                      style={[
-                        styles.headerMethodBadge,
-                        {
-                          backgroundColor: `${AppColors.brandPurple}4D`,
-                          paddingHorizontal: isNarrow ? 5 : 6,
-                          paddingVertical: isNarrow ? 2 : 3,
-                        },
-                      ]}>
-                      <Text style={[styles.headerMethodText, {fontSize: isNarrow ? 9 : 10}]}>ACTION</Text>
-                    </View>
-                    <Text
-                      style={[styles.headerDetailTitle, {fontSize: isNarrow ? 13.5 : 15}]}
-                      numberOfLines={1}
-                      ellipsizeMode="middle">
-                      {selectedReduxAction.type}
-                    </Text>
-                  </View>
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: isNarrow ? 4 : 6,
-                      marginTop: 3,
-                      paddingVertical: 1,
-                    }}>
-                    <View
-                      style={[
-                        styles.headerStatusDot,
-                        {
-                          backgroundColor: AppColors.purple,
-                          width: isNarrow ? 6 : 7,
-                          height: isNarrow ? 6 : 7,
-                        },
-                      ]}
-                    />
-                    <Text style={[styles.headerSubTitle, {fontSize: isNarrow ? 10 : 11}]}>
-                      {selectedReduxAction.timestamp || 'Dispatched'}
-                    </Text>
-                  </ScrollView>
-                </View>
               ) : activeTab === 'crash' && selectedCrash != null ? (
                 <View style={styles.headerDetailCenter}>
                   <View style={styles.headerDetailRow}>
@@ -952,7 +802,7 @@ const InspectorHeader = React.memo(() => {
                 onPress={() => {
                   Alert.alert(
                     'Clear Everything',
-                    'This clears all tabs — APIs, Logs, Analytics, Redux timeline and Crash history. Continue?',
+                    'This clears all tabs — APIs, Logs, Analytics, and Crash history. Continue?',
                     [
                       {text: 'Cancel', style: 'cancel'},
                       {
@@ -1026,7 +876,7 @@ const InspectorHeader = React.memo(() => {
           </View>
         </View>
       </View>
-    </LinearGradient>
+      </View>
 
     {/* Dedicated Update Available Details Modal */}
     <UpdateAvailableModal

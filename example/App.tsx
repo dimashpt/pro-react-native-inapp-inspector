@@ -5,7 +5,6 @@ import { NavigationContainer, createNavigationContainerRef } from '@react-naviga
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import NetworkInspector, {
   ErrorBoundary,
-  connectReduxStore,
   setupNetworkLogger,
   setupConsoleLogger,
   enableNativeCrashProtection,
@@ -23,8 +22,6 @@ setupConsoleLogger();
 // ⚡ Enable Native Kotlin (Android) & iOS Signal/Exception Crash Protection
 enableNativeCrashProtection();
 
-// Connect mock store to the inspector
-connectReduxStore(mockStore);
 
 const Stack = createNativeStackNavigator();
 const navigationRef = createNavigationContainerRef();

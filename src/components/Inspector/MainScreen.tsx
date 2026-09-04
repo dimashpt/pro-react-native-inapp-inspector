@@ -21,8 +21,6 @@ import LogDetail from './LogDetail';
 import ConsoleTab from './ConsoleTab';
 import AnalyticsTab from './AnalyticsTab';
 import AnalyticsDetail from '../AnalyticsDetail';
-import ReduxTab from './ReduxTab';
-import ReduxDetail from './ReduxDetail';
 import BundleTab from './BundleTab';
 import PerformanceTab from './PerformanceTab';
 import CrashTab from './CrashTab';
@@ -47,8 +45,6 @@ const MainScreen = () => {
     selected,
     selectedEvent,
     selectedLog,
-    selectedReduxSlice,
-    selectedReduxAction,
     selectedCrash,
     settingsPage,
     activeTab,
@@ -63,7 +59,6 @@ const MainScreen = () => {
     (activeTab === 'apis' && selected != null) ||
     (activeTab === 'analytics' && selectedEvent != null) ||
     (activeTab === 'logs' && selectedLog != null) ||
-    (activeTab === 'redux' && (selectedReduxSlice != null || selectedReduxAction != null)) ||
     (activeTab === 'crash' && selectedCrash != null);
 
   // ─── 60 FPS Transition Animations ──────────────────────────────────────────
@@ -166,7 +161,6 @@ const MainScreen = () => {
                       {activeTab === 'apis' && <NetworkTab />}
                       {activeTab === 'logs' && <ConsoleTab />}
                       {activeTab === 'analytics' && <AnalyticsTab />}
-                      {activeTab === 'redux' && <ReduxTab />}
                       {activeTab === 'bundle' && <BundleTab />}
                       {activeTab === 'performance' && <PerformanceTab />}
                       {activeTab === 'crash' && <CrashTab />}
@@ -204,7 +198,6 @@ const MainScreen = () => {
                         {activeTab === 'logs' && selectedLog != null && (
                           <LogDetail />
                         )}
-                        {activeTab === 'redux' && <ReduxDetail />}
                         {activeTab === 'crash' && selectedCrash != null && (
                           <CrashDetail />
                         )}

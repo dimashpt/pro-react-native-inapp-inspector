@@ -6,7 +6,6 @@ export const ActiveTab = {
   Apis: 'apis',
   Analytics: 'analytics',
   Logs: 'logs',
-  Redux: 'redux',
   Bundle: 'bundle',
   Performance: 'performance',
   Crash: 'crash',
@@ -65,7 +64,6 @@ export const SettingsPage = {
   Apis: 'apis',
   Logs: 'logs',
   Analytics: 'analytics',
-  Redux: 'redux',
   Bundle: 'bundle',
   Performance: 'performance',
   Crash: 'crash',
@@ -195,7 +193,6 @@ export type CrashFilterType =
 export const BreadcrumbType = {
   Navigation: 'navigation',
   Network: 'network',
-  Redux: 'redux',
   Console: 'console',
   User: 'user',
   System: 'system',

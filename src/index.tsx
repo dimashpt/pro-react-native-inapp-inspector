@@ -98,15 +98,6 @@ import {
   setMaxAnalyticsLogsLimit,
 } from './customHooks/analyticsLogger';
 
-import {
-  getReduxState,
-  subscribeReduxState,
-  setReduxAutoRefresh,
-  getLastActionForReducer,
-  clearActionHistory,
-  isReduxConnected,
-  setReduxModuleEnabled,
-} from './customHooks/reduxLogger';
 
 import {setPerformanceModuleEnabled} from './customHooks/performanceTracker';
 import {setBundleModuleEnabled} from './customHooks/bundleAnalyzer';
@@ -162,12 +153,6 @@ const NetworkInspector = ({
   setCustomStorage(storage || null);
 
   const [isDark, setIsDark] = useState(false);
-  const [reduxState, setReduxState] = useState<any>(null);
-  // Per-reducer last action is kept in component state so the
-  // Redux tab re-renders live on every dispatch, independent of the state tree ref.
-  const [reduxLastActionMap, setReduxLastActionMap] = useState<
-    Record<string, any>
-  >({});
   // Inspector panel height as a percentage of the screen (configurable in Settings).
   const [modalHeightPercent, setModalHeightPercent] = useState<number>(90);
   const [modalAnimationType, setModalAnimationType] = useState<'slide' | 'fade' | 'none'>('slide');
@@ -192,10 +177,6 @@ const NetworkInspector = ({
   const [isCaseSensitive, setIsCaseSensitive] = useState<boolean>(false);
   const [quickFilter, setQuickFilter] = useState<string>('all');
   const [detailSearch, setDetailSearch] = useState('');
-  const [reduxSearch, setReduxSearch] = useState('');
-  const [selectedReduxSlice, setSelectedReduxSlice] = useState<string | null>(null);
-  const [selectedReduxAction, setSelectedReduxAction] = useState<any | null>(null);
-  const [reduxActiveSubTab, setReduxActiveSubTab] = useState<'state' | 'timeline'>('state');
 
   const [apiDetailActiveTab, setApiDetailActiveTab] = useState<
     'metadata' | 'headers' | 'request' | 'response'
@@ -349,7 +330,6 @@ const NetworkInspector = ({
     | 'apis'
     | 'logs'
     | 'analytics'
-    | 'redux'
     | null
   >(null);
   const [settingsActiveSubTab, setSettingsActiveSubTab] = useState<SettingsSubTab>('module');
@@ -359,7 +339,6 @@ const NetworkInspector = ({
     apis: true,
     logs: true,
     analytics: false,
-    redux: false,
     bundle: false,
     performance: false,
     crash: false,
@@ -373,8 +352,6 @@ const NetworkInspector = ({
   const [isAutoRamLimitEnabled, setIsAutoRamLimitEnabled] = useState<boolean>(true);
   const [deviceFreeRamMb, setDeviceFreeRamMb] = useState<number>(1800);
 
-  const [reduxAutoRefresh, setReduxAutoRefreshState] = useState<boolean>(true);
-  const [reduxExpandDepth, setReduxExpandDepth] = useState<number>(1);
 
   // #6 — tab the inspector opens on. Shown with a DEFAULT badge in Settings.
   const [defaultTab, setDefaultTab] = useState<ActiveTab>('apis');
@@ -386,7 +363,6 @@ const NetworkInspector = ({
     setNetworkModuleEnabled(!!tabVisibility.apis);
     setConsoleModuleEnabled(!!tabVisibility.logs);
     setAnalyticsModuleEnabled(!!tabVisibility.analytics);
-    setReduxModuleEnabled(!!tabVisibility.redux);
     setPerformanceModuleEnabled(!!tabVisibility.performance);
     setCrashModuleEnabled(!!tabVisibility.crash);
     setBundleModuleEnabled(!!tabVisibility.bundle);
@@ -422,7 +398,6 @@ const NetworkInspector = ({
       apis: true,
       logs: true,
       analytics: false,
-      redux: false,
       bundle: false,
       performance: false,
       crash: false,
@@ -442,8 +417,6 @@ const NetworkInspector = ({
       warn: true,
       error: true,
     });
-    setReduxAutoRefreshState(true);
-    setReduxExpandDepth(1);
     setShowDuplicateLogs(false);
     setShowUpdateToast(true);
     Alert.alert('Settings Reset', 'All settings have been reset to default values.');
@@ -479,10 +452,6 @@ const NetworkInspector = ({
       if (saved.maxCrashLogs != null) setMaxCrashLogs(saved.maxCrashLogs);
       if (saved.showConsoleLevels)
         setShowConsoleLevels(saved.showConsoleLevels);
-      if (saved.reduxAutoRefresh != null)
-        setReduxAutoRefreshState(saved.reduxAutoRefresh);
-      if (saved.reduxExpandDepth != null)
-        setReduxExpandDepth(saved.reduxExpandDepth);
       if (saved.showDuplicateLogs != null)
         setShowDuplicateLogs(saved.showDuplicateLogs);
       if (saved.showUpdateToast != null)
@@ -494,7 +463,6 @@ const NetworkInspector = ({
             apis: true,
             logs: true,
             analytics: false,
-            redux: false,
             bundle: false,
             performance: false,
             crash: false,
@@ -527,8 +495,6 @@ const NetworkInspector = ({
       maxCrashLogs,
       isAutoRamLimitEnabled,
       showConsoleLevels,
-      reduxAutoRefresh,
-      reduxExpandDepth,
       showDuplicateLogs,
       showUpdateToast,
     });
@@ -544,8 +510,6 @@ const NetworkInspector = ({
     maxCrashLogs,
     isAutoRamLimitEnabled,
     showConsoleLevels,
-    reduxAutoRefresh,
-    reduxExpandDepth,
     showDuplicateLogs,
   ]);
 
@@ -590,15 +554,9 @@ const NetworkInspector = ({
     };
   }, []);
 
-  useEffect(() => {
-    setReduxAutoRefresh(reduxAutoRefresh);
-  }, [reduxAutoRefresh]);
 
-  // Auto-unselect Redux or Analytics tab if module is not connected / available
+  // Auto-unselect Analytics tab if module is not connected / available
   useEffect(() => {
-    if (activeTab === 'redux' && !isReduxConnected()) {
-      setActiveTab('apis');
-    }
     if (activeTab === 'analytics' && !isAnalyticsConnected()) {
       setActiveTab('apis');
     }
@@ -606,7 +564,6 @@ const NetworkInspector = ({
 
   const toggleTabVisibility = (key: ActiveTab) => {
     if (key === 'apis') return;
-    if (key === 'redux' && !isReduxConnected()) return;
     if (key === 'analytics' && !isAnalyticsConnected()) return;
     setTabVisibility(prev => {
       const nextVal = !prev[key];
@@ -636,14 +593,11 @@ const NetworkInspector = ({
   }, []);
 
   const switchActiveTab = useCallback((key: ActiveTab) => {
-    if (key === 'redux' && !isReduxConnected()) return;
     if (key === 'analytics' && !isAnalyticsConnected()) return;
 
     setSelected(null);
     setSelectedEvent(null);
     setSelectedLog(null);
-    setSelectedReduxSlice(null);
-    setSelectedReduxAction(null);
     setSelectedCrash(null);
 
     if (typeof React.startTransition === 'function') {
@@ -1034,11 +988,6 @@ const NetworkInspector = ({
       if (latestAnalyticsEventsRef.current.length > 0) {
         setAnalyticsEvents(latestAnalyticsEventsRef.current);
       }
-      const freshState = getReduxState();
-      if (freshState) {
-        setReduxState(typeof freshState === 'object' ? {...freshState} : freshState);
-        setReduxLastActionMap({...getLastActionForReducer()});
-      }
       const freshCrashes = getCrashRecords();
       if (freshCrashes.length > 0) {
         setCrashRecords(freshCrashes);
@@ -1212,17 +1161,6 @@ const NetworkInspector = ({
       }
     });
 
-    const initialReduxState = getReduxState();
-    if (initialReduxState) {
-      setReduxState(typeof initialReduxState === 'object' ? {...initialReduxState} : initialReduxState);
-      setReduxLastActionMap({...getLastActionForReducer()});
-    }
-    const unsubscribeRedux = subscribeReduxState(() => {
-      if (!isVisibleRef.current) return; // ZERO-RENDER INACTIVE MODE
-      const freshState = getReduxState();
-      setReduxState(freshState && typeof freshState === 'object' ? {...freshState} : freshState);
-      setReduxLastActionMap({...getLastActionForReducer()});
-    });
 
     return () => {
       unsubscribe();
@@ -1231,7 +1169,6 @@ const NetworkInspector = ({
       clearTimeout(analyticsTimeoutId);
       unsubscribeConsole();
       clearTimeout(consoleTimeoutId);
-      unsubscribeRedux();
       unsubscribeCrash();
       cleanupMemoryWarning();
     };
@@ -1825,8 +1762,6 @@ const NetworkInspector = ({
     setSelected(null);
     setSelectedEvent(null);
     setSelectedLog(null);
-    setSelectedReduxSlice(null);
-    setSelectedReduxAction(null);
     setSelectedCrash(null);
   }
 
@@ -1881,24 +1816,6 @@ const NetworkInspector = ({
               setAnalyticsEvents([]);
               setSelectedEvent(null);
               prevEventIdsRef.current = new Set();
-            },
-            style: 'destructive',
-          },
-        ],
-      );
-      return;
-    }
-    if (activeTab === 'redux') {
-      Alert.alert(
-        'Clear Redux Timeline',
-        'Are you sure you want to clear the dispatched action history?',
-        [
-          {text: 'Cancel', style: 'cancel'},
-          {
-            text: 'Clear All',
-            onPress: () => {
-              clearActionHistory();
-              setReduxLastActionMap({});
             },
             style: 'destructive',
           },
@@ -2116,19 +2033,6 @@ const NetworkInspector = ({
     isAnalyticsPaused,
     setIsAnalyticsPaused,
 
-    // ─── Redux ──────────────────────────────────────────────────────────
-    reduxState,
-    setReduxState,
-    reduxLastActionMap,
-    reduxSearch,
-    setReduxSearch,
-    selectedReduxSlice,
-    setSelectedReduxSlice,
-    selectedReduxAction,
-    setSelectedReduxAction,
-    reduxActiveSubTab,
-    setReduxActiveSubTab,
-
     // ─── Crash ───────────────────────────────────────────────────────────
     crashRecords,
     setCrashRecords,
@@ -2167,10 +2071,6 @@ const NetworkInspector = ({
     isAutoRamLimitEnabled,
     setIsAutoRamLimitEnabled,
     deviceFreeRamMb,
-    reduxAutoRefresh,
-    setReduxAutoRefreshState,
-    reduxExpandDepth,
-    setReduxExpandDepth,
   };
 
   return (
@@ -2258,7 +2158,6 @@ export {
   addCrashBreadcrumb,
   recordNavigationBreadcrumb,
   recordNetworkBreadcrumb,
-  recordReduxBreadcrumb,
   recordUserActionBreadcrumb,
   computeCrashFingerprint,
   type CrashEventPayload,
@@ -2267,15 +2166,6 @@ export {
 export {default as CrashTab} from './components/Inspector/CrashTab';
 export {default as ErrorBoundary} from './components/ErrorBoundary';
 
-export {
-  connectReduxStore,
-  inspectorReduxMiddleware,
-  getReduxState,
-  subscribeReduxState,
-  getActionHistory,
-  clearActionHistory,
-  getLastActionForReducer,
-} from './customHooks/reduxLogger';
 
 export {
   getEventCategory,
@@ -2351,11 +2241,6 @@ export {
   pruneConsoleLogs,
 } from './customHooks/consoleLogger';
 
-export {
-  setMaxReduxHistoryLimit,
-  getMaxReduxHistoryLimit,
-  pruneReduxHistory,
-} from './customHooks/reduxLogger';
 
 export {
   setMaxAnalyticsLogsLimit,

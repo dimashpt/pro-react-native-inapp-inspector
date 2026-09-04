@@ -16,7 +16,6 @@ import {
   TerminalIcon,
   AnalyticsIcon,
   PackageIcon,
-  ReduxIcon,
   PerformanceIcon,
   CrashIcon,
   SmartphoneIcon,
@@ -24,7 +23,6 @@ import {
   QrCodeIcon,
 } from '../NetworkIcons';
 
-import {isReduxConnected} from '../../customHooks/reduxLogger';
 import {isAnalyticsConnected} from '../../customHooks/analyticsLogger';
 import {triggerNativeHaptic} from '../../native/NativeInspector';
 import {isLocalDebugEnvironment} from '../../helpers';
@@ -44,7 +42,6 @@ const TabBar = React.memo(() => {
     unreadPulseAnim,
   } = useInspector();
 
-  const isReduxAvail = isReduxConnected();
   const isAnalyticsAvail = isAnalyticsConnected();
 
   return (
@@ -72,12 +69,6 @@ const TabBar = React.memo(() => {
               label: 'Analytics',
               count: analyticsEvents.length,
               icon: 'analytics',
-            },
-            {
-              key: 'redux',
-              label: 'Redux',
-              count: 0,
-              icon: 'redux',
             },
             {
               key: 'bundle',
@@ -126,7 +117,6 @@ const TabBar = React.memo(() => {
               );
             }
             if (!tabVisibility?.[tab.key]) return false;
-            if (tab.key === 'redux' && !isReduxAvail) return false;
             if (tab.key === 'analytics' && !isAnalyticsAvail) return false;
             return true;
           })
@@ -172,9 +162,6 @@ const TabBar = React.memo(() => {
                   )}
                   {tab.icon === 'analytics' && (
                     <AnalyticsIcon color={iconColor} size={14} />
-                  )}
-                  {tab.icon === 'redux' && (
-                    <ReduxIcon color={iconColor} size={14} />
                   )}
                   {tab.icon === 'bundle' && (
                     <PackageIcon color={iconColor} size={14} />

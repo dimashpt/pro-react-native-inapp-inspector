@@ -147,7 +147,7 @@ const getNativeAsyncStorageBridge = (): any => {
 export const getResolvedAsyncStorage = (): any => {
   if (customAsyncStorage) return customAsyncStorage;
 
-  // 1. Global instances
+  // 1. Global instances (e.g. globalThis.AsyncStorage, globalThis.__inAppAsyncStorage)
   try {
     const maybeReq =
       (globalThis as any)?.__inAppAsyncStorage ||
@@ -158,35 +158,7 @@ export const getResolvedAsyncStorage = (): any => {
     }
   } catch {}
 
-  // 2. Dynamic runtime require
-  try {
-    const req =
-      typeof (globalThis as any)?.require === 'function'
-        ? (globalThis as any).require
-        : typeof require === 'function'
-        ? require
-        : null;
-
-    if (req) {
-      try {
-        const mod = req('@react-native-async-storage/async-storage');
-        const resolved = mod?.default || mod;
-        if (resolved && typeof resolved.getAllKeys === 'function') {
-          return resolved;
-        }
-      } catch {}
-
-      try {
-        const legacyMod = req('@react-native-community/async-storage');
-        const resolved = legacyMod?.default || legacyMod;
-        if (resolved && typeof resolved.getAllKeys === 'function') {
-          return resolved;
-        }
-      } catch {}
-    }
-  } catch {}
-
-  // 3. Native Bridge Fallback (Direct SQLite)
+  // 2. Native Bridge Fallback (Direct SQLite via NativeModules)
   const nativeBridge = getNativeAsyncStorageBridge();
   if (nativeBridge) {
     return nativeBridge;
@@ -206,35 +178,13 @@ export const getResolvedMMKV = (id: string = 'default'): any => {
     return customMMKVInstances.get(id);
   }
 
-  // 1. Dynamic require
-  try {
-    const req =
-      typeof (globalThis as any)?.require === 'function'
-        ? (globalThis as any).require
-        : typeof require === 'function'
-        ? require
-        : null;
-
-    if (req) {
-      const mmkvMod = req('react-native-mmkv');
-      const MMKVClass = mmkvMod?.MMKV || mmkvMod?.default?.MMKV;
-      if (MMKVClass && typeof MMKVClass === 'function') {
-        if (!customMMKVInstances.has('default')) {
-          try {
-            const defaultInst = new MMKVClass();
-            customMMKVInstances.set('default', defaultInst);
-          } catch {}
-        }
-      }
-    }
-  } catch {}
-
-  // 2. Global references
+  // 1. Global references (e.g. globalThis.mmkv, globalThis.__MMKV__, globalThis.__inAppMMKV)
   try {
     const globalMMKV =
       (globalThis as any)?.mmkv ||
       (global as any)?.mmkv ||
-      (globalThis as any)?.__MMKV__;
+      (globalThis as any)?.__MMKV__ ||
+      (globalThis as any)?.__inAppMMKV;
     if (globalMMKV && typeof globalMMKV.getAllKeys === 'function') {
       if (!customMMKVInstances.has('default')) {
         customMMKVInstances.set('default', globalMMKV);

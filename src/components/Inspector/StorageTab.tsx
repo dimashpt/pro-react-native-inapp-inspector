@@ -182,8 +182,14 @@ const StorageEntryCard = React.memo(function StorageEntryCard({
 export const StorageTab = React.memo(() => {
   const {t} = useTranslation();
   const listRef = useRef<FlatList>(null);
-  const [activeDriver, setActiveDriver] = useState<StorageDriver>('asyncStorage');
-  const [activeMMKVId, setActiveMMKVId] = useState<string>('default');
+  const mmkvInstanceIds = useMemo(() => getRegisteredMMKVInstanceIds(), []);
+  const [activeDriver, setActiveDriver] = useState<StorageDriver>(() => {
+    if (isMMKVConnected() && !isAsyncStorageConnected()) {
+      return 'mmkv';
+    }
+    return 'asyncStorage';
+  });
+  const [activeMMKVId, setActiveMMKVId] = useState<string>(() => mmkvInstanceIds[0] || 'default');
   const [entries, setEntries] = useState<StorageEntry[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [search, setSearch] = useState<string>('');
@@ -197,7 +203,6 @@ export const StorageTab = React.memo(() => {
   const [editType, setEditType] = useState<'string' | 'json' | 'number' | 'boolean'>('string');
   const [jsonError, setJsonError] = useState<string | null>(null);
 
-  const mmkvInstanceIds = useMemo(() => getRegisteredMMKVInstanceIds(), []);
 
   // Fetch entries
   const loadEntries = useCallback(async () => {

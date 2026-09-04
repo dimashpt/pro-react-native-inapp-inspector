@@ -258,22 +258,17 @@ const addLog = (
   try {
     const message = formatArgs(args);
 
-    // Check if the log should be ignored based on starting prefixes across all categories
-    const allPrefixes = [
-      ...((IGNORED_LOG_PREFIXES && IGNORED_LOG_PREFIXES.info) || []),
-      ...((IGNORED_LOG_PREFIXES && IGNORED_LOG_PREFIXES.warn) || []),
-      ...((IGNORED_LOG_PREFIXES && IGNORED_LOG_PREFIXES.error) || []),
-    ].filter(p => typeof p === 'string' && p.trim().length > 0);
-    if (
-      allPrefixes.some(
-        prefix =>
-          message
-            .toLowerCase()
-            .trim()
-            .startsWith(prefix.toLowerCase().trim()) ||
-          message.toLowerCase().trim().includes(prefix.toLowerCase().trim()),
-      )
-    ) {
+    // Check if the log should be ignored based on starting prefixes for this specific category
+    const categoryPrefixes =
+      (IGNORED_LOG_PREFIXES && IGNORED_LOG_PREFIXES[type]) || [];
+    const trimmedMsg = message.toLowerCase().trim();
+    const isIgnored = categoryPrefixes.some(
+      prefix =>
+        typeof prefix === 'string' &&
+        prefix.trim().length > 0 &&
+        trimmedMsg.startsWith(prefix.toLowerCase().trim()),
+    );
+    if (isIgnored) {
       return;
     }
 
@@ -466,7 +461,13 @@ export const setupConsoleLogger = () => {
     try {
       addLog('warn', args, 'warn');
     } catch {}
-    originalConsole.warn(...args);
+    if (typeof originalConsole.warn === 'function') {
+      try {
+        originalConsole.warn.apply(console, args);
+      } catch {
+        originalConsole.warn(...args);
+      }
+    }
   };
 
   // Intercept console.error
@@ -495,3 +496,8 @@ export const setupConsoleLogger = () => {
 
   (globalThis as any).__CONSOLE_LOGGER_INITIALIZED__ = true;
 };
+
+// Auto-initialize immediately on module import so early logs/warnings are captured
+try {
+  setupConsoleLogger();
+} catch {}

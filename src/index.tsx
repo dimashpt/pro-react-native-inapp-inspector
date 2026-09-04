@@ -288,38 +288,23 @@ const NetworkInspector = ({
     error: boolean;
   }>({
     info: true,
-    warn: false,
+    warn: true,
     error: true,
   });
   const visibleConsoleLogs = useMemo(() => {
     const filtered = consoleLogs.filter(log => {
       const type = log.type;
-      if (type === 'info' && !showConsoleLevels?.info) return false;
-      if (type === 'warn' && !showConsoleLevels?.warn) return false;
-      if (type === 'error' && !showConsoleLevels?.error) return false;
-
-      const message = log.message || '';
-      const allPrefixes = [
-        ...((IGNORED_LOG_PREFIXES && IGNORED_LOG_PREFIXES.info) || []),
-        ...((IGNORED_LOG_PREFIXES && IGNORED_LOG_PREFIXES.warn) || []),
-        ...((IGNORED_LOG_PREFIXES && IGNORED_LOG_PREFIXES.error) || []),
-      ].filter(p => typeof p === 'string' && p.trim().length > 0);
-      const isIgnored = allPrefixes.some(
-        prefix =>
-          message
-            .toLowerCase()
-            .trim()
-            .startsWith(prefix.toLowerCase().trim()) ||
-          message.toLowerCase().trim().includes(prefix.toLowerCase().trim()),
-      );
-      return !isIgnored;
+      if (type === 'info' && showConsoleLevels?.info === false) return false;
+      if (type === 'warn' && showConsoleLevels?.warn === false) return false;
+      if (type === 'error' && showConsoleLevels?.error === false) return false;
+      return true;
     });
     return filtered.slice(0, maxConsoleLogs);
   }, [consoleLogs, showConsoleLevels, maxConsoleLogs]);
   const [logSearch, setLogSearch] = useState('');
   const [logFilters, setLogFilters] = useState<
     Set<'all' | 'info' | 'warn' | 'error' | 'user-log' | 'analytics'>
-  >(new Set(['user-log']));
+  >(new Set(['all']));
 
   // ─── Settings state ──────────────────────────────────────────────────────────
   const [settingsPage, setSettingsPage] = useState<
@@ -448,7 +433,11 @@ const NetworkInspector = ({
         setMaxAnalyticsEventsLimit(saved.maxAnalyticsEventsLimit);
       if (saved.maxCrashLogs != null) setMaxCrashLogs(saved.maxCrashLogs);
       if (saved.showConsoleLevels)
-        setShowConsoleLevels(saved.showConsoleLevels);
+        setShowConsoleLevels({
+          info: saved.showConsoleLevels.info !== false,
+          warn: true, // Always enable warn by default so old saved state doesn't mute it
+          error: saved.showConsoleLevels.error !== false,
+        });
       if (saved.showDuplicateLogs != null)
         setShowDuplicateLogs(saved.showDuplicateLogs);
       if (saved.showUpdateToast != null)
@@ -1580,7 +1569,8 @@ const NetworkInspector = ({
     if (logFilters.size > 0 && !logFilters.has('all')) {
       result = result.filter(log => {
         if (logFilters.has(log.type)) return true;
-        if (logFilters.has('user-log') && log.sourceMethod === 'log')
+        if (logFilters.has(log.sourceMethod as any)) return true;
+        if (logFilters.has('user-log') && (log.sourceMethod === 'log' || log.type === 'info'))
           return true;
         if (
           logFilters.has('analytics') &&

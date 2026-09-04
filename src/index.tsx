@@ -947,7 +947,6 @@ const NetworkInspector = ({
 
   useEffect(() => {
     setupNetworkLogger();
-    clearNetworkLogs();
     setupConsoleLogger();
     autoSetupAnalyticsLogger();
     setupGlobalCrashHandler();

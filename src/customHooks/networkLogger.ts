@@ -88,6 +88,24 @@ function normaliseHeaders(
   });
   return Object.keys(result).length > 0 ? result : undefined;
 }
+function parseResponseHeaders(
+  headerStr: string | null | undefined,
+): Record<string, string> | undefined {
+  if (!headerStr) return undefined;
+  const headers: Record<string, string> = {};
+  const lines = headerStr.trim().split(/[\r\n]+/);
+  lines.forEach((line) => {
+    const idx = line.indexOf(':');
+    if (idx > 0) {
+      const key = line.slice(0, idx).trim().toLowerCase();
+      const val = line.slice(idx + 1).trim();
+      if (key) {
+        headers[key] = val;
+      }
+    }
+  });
+  return Object.keys(headers).length > 0 ? headers : undefined;
+}
 
 // ✅ Parse FormData for File Upload previews
 function parseRequestData(data: any): any {
@@ -333,6 +351,166 @@ export const setupNetworkLogger = () => {
   } catch (_e) {
     // Axios not available — fetch-only mode
   }
+  // Hook XMLHttpRequest — captures Axios (which uses XHR in React Native) and other XHR clients
+  const XHR = (globalThis as any).XMLHttpRequest;
+  if (XHR && XHR.prototype && !XHR.prototype.__INAPP_HOOKED__) {
+    XHR.prototype.__INAPP_HOOKED__ = true;
+    const originalXHROpen = XHR.prototype.open;
+    const originalXHRSend = XHR.prototype.send;
+    const originalXHRSetRequestHeader = XHR.prototype.setRequestHeader;
+
+    XHR.prototype.open = function (method: string, url: any, ...rest: any[]) {
+      try {
+        this._inapp_method = (method || 'GET').toUpperCase();
+        this._inapp_url = typeof url === 'string' ? url : url?.url ?? String(url);
+        this._inapp_headers = {};
+        this._inapp_startTime = Date.now();
+        this._inapp_id = counter++;
+      } catch {}
+      return originalXHROpen.apply(this, [method, url, ...rest]);
+    };
+
+    if (originalXHRSetRequestHeader) {
+      XHR.prototype.setRequestHeader = function (header: string, value: string) {
+        try {
+          if (this._inapp_headers && header) {
+            this._inapp_headers[header.toLowerCase()] = value;
+          }
+        } catch {}
+        return originalXHRSetRequestHeader.apply(this, [header, value]);
+      };
+    }
+
+    XHR.prototype.send = function (data: any) {
+      const id = this._inapp_id ?? counter++;
+      const method = this._inapp_method || 'GET';
+      const url = this._inapp_url;
+      const start = this._inapp_startTime || Date.now();
+      const requestHeaders = this._inapp_headers;
+
+      // Skip if marked as already tracked by an Axios interceptor to avoid duplicates
+      const isAlreadyTracked = Boolean(
+        requestHeaders?.['x-inapp-tracked'] || this._inapp_tracked,
+      );
+
+      if (
+        !isAlreadyTracked &&
+        isNetworkModuleEnabled &&
+        ALLOWED_METHODS.includes(method) &&
+        !shouldIgnoreUrl(url)
+      ) {
+        let caller = 'Unknown';
+        try {
+          caller = getCallerFromStack();
+        } catch {}
+
+        const client =
+          caller?.toLowerCase().includes('axios') ||
+          requestHeaders?.['x-requested-with']?.toLowerCase().includes('xmlhttprequest')
+            ? 'axios'
+            : 'xhr';
+        const currentRoute = currentRouteProvider ? currentRouteProvider() : null;
+
+        addOrUpdateLog({
+          id,
+          url,
+          method,
+          startTime: start,
+          caller,
+          client,
+          routeInfo: currentRoute || undefined,
+          request: method === 'GET' ? undefined : parseRequestData(data),
+          requestHeaders: normaliseHeaders(requestHeaders),
+        });
+
+        const onComplete = (
+          status: number,
+          responsePayload: any,
+          headerStr?: string | null,
+        ) => {
+          if (this._inapp_completed) return;
+          this._inapp_completed = true;
+          const duration = Date.now() - start;
+          const responseHeaders = parseResponseHeaders(headerStr);
+
+          let parsed = responsePayload;
+          if (typeof responsePayload === 'string') {
+            try {
+              parsed = JSON.parse(responsePayload);
+            } catch {
+              parsed = responsePayload;
+            }
+          }
+
+          addOrUpdateLog({
+            id,
+            url,
+            method,
+            status,
+            response: parsed,
+            duration,
+            startTime: start,
+            caller,
+            client,
+            responseHeaders,
+          });
+        };
+
+        this.addEventListener('load', () => {
+          let responseData: any = null;
+          try {
+            const respType = this.responseType;
+            if (!respType || respType === '' || respType === 'text') {
+              responseData = this.responseText;
+            } else {
+              responseData = this.response;
+            }
+          } catch {
+            responseData = this.response;
+          }
+          onComplete(
+            this.status,
+            responseData,
+            typeof this.getAllResponseHeaders === 'function'
+              ? this.getAllResponseHeaders()
+              : null,
+          );
+        });
+
+        this.addEventListener('error', (e: any) => {
+          onComplete(
+            0,
+            e?.message || 'Network Error',
+            typeof this.getAllResponseHeaders === 'function'
+              ? this.getAllResponseHeaders()
+              : null,
+          );
+        });
+
+        this.addEventListener('timeout', () => {
+          onComplete(
+            0,
+            'Timeout Error',
+            typeof this.getAllResponseHeaders === 'function'
+              ? this.getAllResponseHeaders()
+              : null,
+          );
+        });
+
+        this.addEventListener('abort', () => {
+          onComplete(
+            0,
+            'Request Aborted',
+            typeof this.getAllResponseHeaders === 'function'
+              ? this.getAllResponseHeaders()
+              : null,
+          );
+        });
+      }
+
+      return originalXHRSend.apply(this, [data]);
+    };
+  }
 
   try {
     setupGlobalCrashHandler();
@@ -361,6 +539,8 @@ export const addAxiosInterceptors = (axiosInstance: any) => {
     config.__logStart = start;
     config.__logCaller = caller;
 
+    config.headers = config.headers || {};
+    config.headers['x-inapp-tracked'] = '1';
     const currentRoute = currentRouteProvider ? currentRouteProvider() : null;
 
     addOrUpdateLog({
@@ -434,3 +614,8 @@ export const addAxiosInterceptors = (axiosInstance: any) => {
     },
   );
 };
+
+// Auto-initialize immediately on import so axios.create and XHR/fetch are hooked as early as possible
+try {
+  setupNetworkLogger();
+} catch {}

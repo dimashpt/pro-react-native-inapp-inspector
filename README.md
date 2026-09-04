@@ -87,7 +87,7 @@ npx expo install react-native-inapp-inspector react-native-svg
 ```
 
 ### Dependencies
-The package requires React (`>=18.0.0`) and React Native (`>=0.60.0`) as peer dependencies and utilizes `@react-navigation/native` and `react-native-svg`.
+The package requires React (`>=18.0.0`) and React Native (`>=0.60.0`) as peer dependencies and utilizes `react-native-svg`.
 
 *(Optional)* If you use `@react-native-clipboard/clipboard` in your project, the inspector automatically detects and utilizes native clipboard bridges for seamless emulator-to-host copying.
 
@@ -202,31 +202,6 @@ The APIs tab features:
 - **Telemetry Strip**: Real-time **Success Rate %**, **Avg Latency (ms)**, and **P95 Latency (ms)**.
 - **Timing Waterfall**: Color-coded latency progress bars on each request card and duration benchmarks in request details.
 - **cURL & Fetch Export**: Instant copyable commands for debugging in Postman, Charles, or Terminal.
-
----
-
-
-## 🧭 Navigation & Screen Tracking
-
-To group network requests, logs, and analytics by the active screen, pass your navigation container ref:
-
-```jsx
-import {NavigationContainer, createNavigationContainerRef} from '@react-navigation/native';
-import NetworkInspector from 'react-native-inapp-inspector';
-
-const navigationRef = createNavigationContainerRef();
-
-const App = () => {
-  return (
-    <>
-      <NavigationContainer ref={navigationRef}>
-        {/* Your screens */}
-      </NavigationContainer>
-      <NetworkInspector navigationRef={navigationRef} />
-    </>
-  );
-};
-```
 
 ---
 

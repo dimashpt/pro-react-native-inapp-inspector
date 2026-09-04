@@ -33,7 +33,6 @@ import NpmUpdateToast from './NpmUpdateToast';
 import Toast from '../Toast';
 import styles from '../../styles';
 import {AppColors} from '../../styles/AppColors';
-import NavigationTracker from './NavigationTracker';
 import {isLocalDebugEnvironment} from '../../helpers';
 
 const MainScreen = () => {
@@ -51,8 +50,6 @@ const MainScreen = () => {
     isReady,
     enabled,
     useNativeFab,
-    hasNavigationContext,
-    setNavState,
   } = useInspector();
 
   const isDetailActive =
@@ -239,9 +236,6 @@ const MainScreen = () => {
             </View>
           </View>
         </ErrorBoundary>
-      )}
-      {hasNavigationContext && (
-        <NavigationTracker onStateChange={setNavState} />
       )}
     </Modal>
     </>

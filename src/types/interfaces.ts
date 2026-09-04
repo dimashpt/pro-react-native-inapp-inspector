@@ -168,16 +168,12 @@ export interface NetworkInspectorProps {
   enabled?: boolean;
   telemetry?: boolean;
   storage?: InspectorStorage;
-  navigationRef?: any;
   appIcon?: any;
   environment?: 'DEV' | 'UAT' | 'PrePROD' | 'PROD' | 'QA' | 'Staging' | string;
   initialVisible?: boolean;
   visible?: boolean;
 }
 
-export interface NavigationTrackerProps {
-  onStateChange: (state: any) => void;
-}
 
 export interface InspectorContextValue {
   // ─── Modal / launcher ──────────────────────────────────────────────────────
@@ -195,8 +191,6 @@ export interface InspectorContextValue {
   setModalAnimationType: React.Dispatch<
     React.SetStateAction<'slide' | 'fade' | 'none'>
   >;
-  hasNavigationContext: boolean;
-  setNavState: React.Dispatch<React.SetStateAction<any>>;
 
   // ─── Tabs ──────────────────────────────────────────────────────────────────
   activeTab: ActiveTab;

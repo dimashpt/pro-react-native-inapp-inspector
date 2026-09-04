@@ -47,7 +47,6 @@ function App() {
       </ErrorBoundary>
       {/* Render inspector globally outside inner component ErrorBoundary */}
       <NetworkInspector
-        navigationRef={navigationRef}
         environment="DEV"
         appIcon={<BrandSquareIcon />}
       />

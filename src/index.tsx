@@ -8,7 +8,6 @@ import {
   LogBox,
   InteractionManager,
 } from 'react-native';
-import {NavigationContext} from '@react-navigation/native';
 
 // i18n
 import {I18nextProvider, i18n} from './i18n';
@@ -25,7 +24,6 @@ import {
 // Helpers
 import {
   formatDisplayUrl,
-  getNavigationInfo,
   getLogPageName,
   deduplicateLogs,
   getDomainColor,
@@ -143,7 +141,6 @@ import {toggleGlobalTheme} from './styles';
 const NetworkInspector = ({
   enabled = true,
   storage,
-  navigationRef,
   appIcon,
   environment,
   initialVisible = false,
@@ -672,9 +669,6 @@ const NetworkInspector = ({
   const [newEventIds, setNewEventIds] = useState<Set<number>>(new Set());
   const prevEventIdsRef = useRef<Set<number>>(new Set());
 
-  const [navState, setNavState] = useState<any>(null);
-  const navigationContext = React.useContext(NavigationContext);
-  const hasNavigationContext = navigationContext !== undefined;
 
   const currentRouteRef = useRef<RouteInfo>({
     path: '',
@@ -688,60 +682,6 @@ const NetworkInspector = ({
     };
   }, []);
 
-  useEffect(() => {
-    if (navState) {
-      const info = getNavigationInfo(navState);
-      if (info?.path) {
-        currentRouteRef.current = info;
-      }
-    }
-  }, [navState]);
-
-  useEffect(() => {
-    if (!navigationRef) return;
-
-    const updateState = () => {
-      try {
-        if (typeof navigationRef.isReady === 'function' && navigationRef.isReady()) {
-          const currentRoute = typeof navigationRef.getCurrentRoute === 'function'
-            ? navigationRef.getCurrentRoute()
-            : null;
-          if (currentRoute?.name) {
-            currentRouteRef.current = {
-              path: currentRoute.name,
-              params: currentRoute.params || null,
-            };
-          }
-          const state = navigationRef.getRootState();
-          if (state) {
-            setNavState(state);
-            const routeInfo = getNavigationInfo(state);
-            if (routeInfo?.path) {
-              currentRouteRef.current = routeInfo;
-            }
-          }
-        }
-      } catch (err) {
-        // Safe check
-      }
-    };
-
-    // Initialize state
-    updateState();
-
-    // Listen to changes
-    const unsubscribe = typeof navigationRef.addListener === 'function'
-      ? navigationRef.addListener('state', () => {
-          updateState();
-        })
-      : null;
-
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, [navigationRef]);
 
   const logRouteMapRef = useRef<Map<number, RouteInfo>>(new Map());
   const prevLogIdsRef = useRef<Set<number>>(new Set());
@@ -1914,8 +1854,6 @@ const NetworkInspector = ({
     setModalHeightPercent,
     modalAnimationType,
     setModalAnimationType,
-    hasNavigationContext,
-    setNavState,
 
     // ─── Tabs ───────────────────────────────────────────────────────────
     activeTab,

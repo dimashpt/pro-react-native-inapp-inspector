@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Removed
+- Removed `@react-navigation/native` dependency, NavigationTracker component, and React Navigation tracking.
 - Removed Redux logger implementation, ReduxTab, ReduxDetail, Redux middleware, and `./redux` submodule.
 - Removed `react-native-linear-gradient` dependency; replaced with React Native `View` to reduce dependencies and simplify installation.
 ### Fixed

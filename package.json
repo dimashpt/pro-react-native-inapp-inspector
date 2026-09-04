@@ -1,6 +1,6 @@
 {
   "name": "react-native-inapp-inspector",
-  "version": "2.3.17",
+  "version": "2.3.18",
   "description": "The zero-config, all-in-one in-app debugger for React Native & Expo. Inspect Network (fetch/axios), Console logs, Stack Traces, Redux State, Firebase Analytics, and JS Bundle size directly on device.",
   "repository": {
     "type": "git",
@@ -158,13 +158,7 @@
     "react-native": ">=0.60.0",
     "react-native-svg": ">=12.0.0"
   },
-  "peerDependenciesMeta": {
-    "@react-navigation/native": {
-      "optional": true
-    }
-  },
   "devDependencies": {
-    "@react-navigation/native": "6.1.9",
     "@types/react": "19.1.0",
     "@types/react-native": "0.72.0",
     "axios": "1.7.2",

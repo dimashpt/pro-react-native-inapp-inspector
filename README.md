@@ -57,6 +57,9 @@ The **zero-config, all-in-one in-app debugging overlay for React Native & Expo**
 | ⏸️ **Live Stream Pause / Resume** | Freeze incoming network requests, console logs, and analytics streams on the fly to inspect active traffic without list jumping. |
 | 📊 **Analytics Tracker** | Tracks manual events and auto-patches `@react-native-firebase/analytics` calls (`logEvent`, `logScreenView`, `setUserProperties`, and `setUserId`). |
 | 📦 **Bundle Visualizer** | In-app JavaScript bundle size breakdown, Hermes engine bytecode metrics, visual package treemap, and integrated `react-native-bundle-visualizer` CLI. |
+| 🗄️ **Storage Inspector** | Direct inspection and live manipulation of key-value stores (`AsyncStorage`, `MMKV`). Edit values, delete keys, search, and refresh in real time. |
+| 🔐 **ENV Variables** | Live environment variable viewer for `process.env`, Expo Config, or custom objects. Sensitive key auto-masking with reveal toggles and clipboard export. |
+| 🔄 **React Query Debugger** | Integrated TanStack Query / React Query inspector. Real-time query cache telemetry, data viewer, query invalidation, refetching, and cache purge controls. |
 | 🛡️ **Error Boundary & Native Crash Catcher** | Built-in React `ErrorBoundary` and native exception/signal crash catcher emitting rich stack traces and device diagnostics. |
 
 ---
@@ -137,10 +140,10 @@ setupConsoleLogger();
 Access native low-level device, battery, and memory metrics:
 
 ```javascript
-import { 
-  getNativeDeviceMetrics, 
-  enableNativeCrashProtection, 
-  subscribeNativeCrashes 
+import {
+  getNativeDeviceMetrics,
+  enableNativeCrashProtection,
+  subscribeNativeCrashes
 } from 'react-native-inapp-inspector';
 
 // Fetch hardware & memory metrics
@@ -304,6 +307,10 @@ flowchart TB
 | `subscribeConsoleLogs(cb)` | Function | Subscribes to console log updates. |
 | `setupAnalyticsLogger(instance)` | Function | Patches a Firebase Analytics instance. |
 | `logAnalyticsEvent(name, params?, userProps?)` | Function | Logs a manual analytics event. |
+| `connectAsyncStorage(storage)` | Function | Connects `@react-native-async-storage/async-storage` instance. |
+| `connectMMKV(storage)` | Function | Connects a `react-native-mmkv` instance. |
+| `connectEnvVariables(env)` | Function | Registers environment variables for the ENV tab. |
+| `connectQueryClient(queryClient)` | Function | Connects TanStack / React Query client to debugger. |
 | `ErrorBoundary` | Component | React error boundary component. |
 
 ---

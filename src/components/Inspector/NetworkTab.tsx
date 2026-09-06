@@ -47,6 +47,8 @@ import {
   AtomIcon,
   BoltIcon,
   ShieldAlertIcon,
+  ListTreeIcon,
+  ListIcon,
 } from '../NetworkIcons';
 
 
@@ -84,6 +86,9 @@ const NetworkTab = React.memo(() => {
     setSelected,
     isNetworkPaused,
     setIsNetworkPaused,
+    isApiGroupingEnabled,
+    toggleApiGrouping,
+    setIsApiGroupingEnabled,
   } = useInspector();
 
   const {t} = useTranslation();
@@ -101,8 +106,9 @@ const NetworkTab = React.memo(() => {
       latency: 'all',
       protocol: 'all',
       sortBy: sortOrder === 'newest' ? 'time_desc' : 'time_asc',
+      isGroupingEnabled: isApiGroupingEnabled,
     }),
-    [statusFilters, methodFilters, sortOrder],
+    [statusFilters, methodFilters, sortOrder, isApiGroupingEnabled],
   );
 
   const handleApplyNetworkFilters = useCallback(
@@ -129,8 +135,12 @@ const NetworkTab = React.memo(() => {
       } else {
         setSortOrder('newest');
       }
+
+      if (newFilters.isGroupingEnabled !== undefined) {
+        setIsApiGroupingEnabled(newFilters.isGroupingEnabled);
+      }
     },
-    [setStatusFilters, setMethodFilters, setSortOrder],
+    [setStatusFilters, setMethodFilters, setSortOrder, setIsApiGroupingEnabled],
   );
 
   const quickCounts = useMemo(() => {
@@ -373,6 +383,30 @@ const NetworkTab = React.memo(() => {
       }
 
       const {log, isLast, color} = item;
+
+      if (!isApiGroupingEnabled) {
+        return (
+          <AnimatedEntrance
+            index={index}
+            distance={8}
+            style={styles.ungroupedCardWrapper}>
+            <LogCard
+              item={log}
+              isSelected={selectedLogs.has(log.id)}
+              onToggleSelect={toggleSelect}
+              onPress={() => {
+                animateNextLayout();
+                setSelected(log);
+              }}
+              timelineMinStart={minStart}
+              timelineTotalRange={totalRange}
+              isNew={newLogIds.has(log.id)}
+              searchStr={search}
+            />
+          </AnimatedEntrance>
+        );
+      }
+
       return (
         <AnimatedEntrance
           index={index}
@@ -412,6 +446,7 @@ const NetworkTab = React.memo(() => {
       );
     },
     [
+      isApiGroupingEnabled,
       minStart,
       totalRange,
       newLogIds,
@@ -653,6 +688,34 @@ const NetworkTab = React.memo(() => {
                     }
                     size={16}
                   />
+                </TouchableScale>
+
+                <TouchableScale
+                  style={[
+                    styles.toolbarBtn,
+                    isApiGroupingEnabled && {
+                      borderColor: AppColors.purple,
+                      backgroundColor: `${AppColors.purple}15`,
+                    },
+                  ]}
+                  onPress={toggleApiGrouping}
+                  hitSlop={6}
+                  accessibilityLabel={
+                    isApiGroupingEnabled
+                      ? t('network.disableGrouping') || 'Disable grouping'
+                      : t('network.enableGrouping') || 'Enable grouping'
+                  }>
+                  {isApiGroupingEnabled ? (
+                    <ListTreeIcon
+                      color={AppColors.purple}
+                      size={16}
+                    />
+                  ) : (
+                    <ListIcon
+                      color={AppColors.grayTextStrong}
+                      size={16}
+                    />
+                  )}
                 </TouchableScale>
 
                 <TouchableScale

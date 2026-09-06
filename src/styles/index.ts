@@ -232,13 +232,13 @@ export const getRawStyles = (colors: typeof AppColors) => ({
     justifyContent: 'space-between',
     paddingHorizontal: 12,
     marginBottom: 10,
-    gap: 10,
+    gap: 8,
     marginTop: 4,
   },
   toolbarRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 6,
   },
   toolbarBtn: {
     width: 34,
@@ -548,6 +548,10 @@ export const getRawStyles = (colors: typeof AppColors) => ({
   treeCardWrapper: {
     flex: 1,
     paddingVertical: 3,
+  },
+  ungroupedCardWrapper: {
+    marginHorizontal: 8,
+    marginBottom: 6,
   },
 
   card: {

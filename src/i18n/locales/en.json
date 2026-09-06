@@ -92,6 +92,8 @@
       "showStatusFilterDescription": "Show status chips in the APIs list",
       "showMethodFilter": "Method Filter",
       "showMethodFilterDescription": "Show method chips in the APIs list",
+      "groupRequests": "Group Requests",
+      "groupRequestsDescription": "Group API requests by screen name or domain",
       "defaultTabDescription": "Tab the inspector opens on"
     },
     "logs": {
@@ -208,6 +210,11 @@
     "groupByPage": "Group by page",
     "groupByDomain": "Group by domain",
     "groupByNone": "List",
+    "enableGrouping": "Enable grouping",
+    "disableGrouping": "Disable grouping",
+    "grouping": "Grouping",
+    "grouped": "Grouped",
+    "flatList": "Flat List",
     "domain": "Domain",
     "page": "Page",
     "requests": "{{count}} requests",

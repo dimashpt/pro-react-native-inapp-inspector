@@ -32,6 +32,8 @@ import {
   TurtleIcon,
   HourglassIcon,
   PackageIcon,
+  ListTreeIcon,
+  ListIcon,
 } from '../NetworkIcons';
 import TouchableScale from '../TouchableScale';
 
@@ -41,6 +43,7 @@ export interface NetworkFilterState {
   latency: 'all' | 'fast' | 'normal' | 'slow';
   protocol: 'all' | 'https' | 'http';
   sortBy: 'time_desc' | 'time_asc' | 'duration_desc' | 'duration_asc' | 'size_desc';
+  isGroupingEnabled?: boolean;
 }
 
 export const DEFAULT_NETWORK_FILTERS: NetworkFilterState = {
@@ -49,6 +52,7 @@ export const DEFAULT_NETWORK_FILTERS: NetworkFilterState = {
   latency: 'all',
   protocol: 'all',
   sortBy: 'time_desc',
+  isGroupingEnabled: true,
 };
 
 export const isNetworkFiltersDefault = (f: NetworkFilterState): boolean =>
@@ -56,7 +60,8 @@ export const isNetworkFiltersDefault = (f: NetworkFilterState): boolean =>
   (f.methods.has('all') || f.methods.size === 0) &&
   f.latency === 'all' &&
   f.protocol === 'all' &&
-  f.sortBy === 'time_desc';
+  f.sortBy === 'time_desc' &&
+  (f.isGroupingEnabled === undefined || f.isGroupingEnabled === true);
 
 interface NetworkFilterModalProps {
   visible: boolean;
@@ -227,6 +232,7 @@ export const NetworkFilterModal: React.FC<NetworkFilterModalProps> = ({
       latency: 'all',
       protocol: 'all',
       sortBy: 'time_desc',
+      isGroupingEnabled: true,
     });
   };
 
@@ -518,6 +524,45 @@ export const NetworkFilterModal: React.FC<NetworkFilterModalProps> = ({
                       key={item.key}
                       activeOpacity={0.7}
                       onPress={() => setDraft(prev => ({...prev, sortBy: item.key}))}
+                      style={[
+                        styles.chip,
+                        isSelected && {
+                          backgroundColor: `${AppColors.purple}15`,
+                          borderColor: AppColors.purple,
+                        },
+                      ]}>
+                      <IconComp
+                        size={13}
+                        color={isSelected ? AppColors.purple : AppColors.grayTextWeak}
+                      />
+                      <Text
+                        style={[
+                          styles.chipLabel,
+                          isSelected && {color: AppColors.purple, fontFamily: AppFonts.interBold},
+                        ]}>
+                        {item.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+
+            {/* Section 6: View & Grouping */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>VIEW & GROUPING</Text>
+              <View style={styles.chipsWrap}>
+                {[
+                  {enabled: true, label: 'Grouped (By Domain)', icon: ListTreeIcon},
+                  {enabled: false, label: 'Flat List', icon: ListIcon},
+                ].map(item => {
+                  const isSelected = (draft.isGroupingEnabled ?? true) === item.enabled;
+                  const IconComp = item.icon;
+                  return (
+                    <TouchableOpacity
+                      key={String(item.enabled)}
+                      activeOpacity={0.7}
+                      onPress={() => setDraft(prev => ({...prev, isGroupingEnabled: item.enabled}))}
                       style={[
                         styles.chip,
                         isSelected && {

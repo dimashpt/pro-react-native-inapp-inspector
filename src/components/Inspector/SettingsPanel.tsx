@@ -57,6 +57,7 @@ import {
   QrCodeIcon,
   KeyIcon,
   ReactQueryIcon,
+  ListTreeIcon,
 } from '../NetworkIcons';
 import {LIB_VERSION} from '../../constants';
 import {copyToClipboard, isLocalDebugEnvironment} from '../../helpers';
@@ -108,6 +109,8 @@ const SettingsPanel = () => {
     setMaxCrashLogs,
     updateAvailable,
     latestNpmVersion,
+    isApiGroupingEnabled,
+    setIsApiGroupingEnabled,
   } = useInspector();
 
   const [stagedHeight, setStagedHeight] = useState(modalHeightPercent);
@@ -2459,6 +2462,56 @@ const SettingsPanel = () => {
               placeholder: 'Enter max requests (10-100)',
             },
             isLast: true,
+          })}
+        </View>
+
+        <View
+          style={{
+            backgroundColor: AppColors.primaryLight,
+            padding: 16,
+            borderRadius: 14,
+            borderWidth: 1,
+            borderColor: AppColors.grayBorderSecondary,
+          }}>
+          {renderSettingRow({
+            icon: <ListTreeIcon color={AppColors.purple} size={16} />,
+            label: t('settings.apis.groupRequests') || 'Group Requests',
+            description:
+              t('settings.apis.groupRequestsDescription') ||
+              'Group API requests by screen name or domain',
+            isLast: true,
+            right: (
+              <TouchableScale
+                accessible={true}
+                accessibilityRole="switch"
+                accessibilityLabel="Toggle group API requests"
+                accessibilityState={{checked: isApiGroupingEnabled}}
+                onPress={() => setIsApiGroupingEnabled(prev => !prev)}
+                style={{
+                  width: 42,
+                  height: 24,
+                  borderRadius: 12,
+                  backgroundColor: isApiGroupingEnabled
+                    ? AppColors.purple
+                    : AppColors.grayBorderSecondary,
+                  padding: 2,
+                  justifyContent: 'center',
+                  alignItems: isApiGroupingEnabled ? 'flex-end' : 'flex-start',
+                }}>
+                <View
+                  style={{
+                    width: 20,
+                    height: 20,
+                    borderRadius: 10,
+                    backgroundColor: AppColors.white,
+                    shadowColor: AppColors.black,
+                    shadowOpacity: 0.18,
+                    shadowRadius: 2,
+                    shadowOffset: {width: 0, height: 1},
+                  }}
+                />
+              </TouchableScale>
+            ),
           })}
         </View>
 

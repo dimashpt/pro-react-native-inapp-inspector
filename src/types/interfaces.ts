@@ -158,6 +158,7 @@ export interface PersistedSettings {
   showConsoleLevels?: {info: boolean; warn: boolean; error: boolean};
   showDuplicateLogs?: boolean;
   showUpdateToast?: boolean;
+  isApiGroupingEnabled?: boolean;
   telemetryClientId?: string;
   telemetryLastPing?: number;
 }
@@ -261,6 +262,9 @@ export interface InspectorContextValue {
   handleDelete: () => void;
   isNetworkPaused: boolean;
   setIsNetworkPaused: React.Dispatch<React.SetStateAction<boolean>>;
+  isApiGroupingEnabled: boolean;
+  setIsApiGroupingEnabled: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleApiGrouping: () => void;
 
   // ─── Network detail ────────────────────────────────────────────────────────
   detailTitle: string;

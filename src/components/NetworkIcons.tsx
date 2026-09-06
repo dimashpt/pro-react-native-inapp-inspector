@@ -2375,5 +2375,32 @@ export const ReactQueryIcon = ({
     />
   </Svg>
 );
+export const ListTreeIcon = ({
+  color = AppColors.grayTextWeak,
+  size = 16,
+}: IconProps) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M21 12h-8M21 6H8M21 18h-8M3 6v4c0 1.1.9 2 2 2h3M3 10v6c0 1.1.9 2 2 2h3"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
 
-
+export const ListIcon = ({
+  color = AppColors.grayTextWeak,
+  size = 16,
+}: IconProps) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);

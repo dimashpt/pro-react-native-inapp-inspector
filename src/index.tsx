@@ -33,6 +33,7 @@ import {
   pruneAllLogs,
   subscribeMemoryWarning,
 } from './helpers';
+import {showToast} from './helpers/toast';
 // #5 — settings persistence
 import {
   loadSettings,
@@ -229,6 +230,14 @@ const NetworkInspector = ({
   const isNetworkPausedRef = useRef(isNetworkPaused);
   isNetworkPausedRef.current = isNetworkPaused;
   const latestNetworkLogsRef = useRef<NetworkLog[]>([]);
+  const [isApiGroupingEnabled, setIsApiGroupingEnabled] = useState<boolean>(false);
+  const toggleApiGrouping = useCallback(() => {
+    setIsApiGroupingEnabled(prev => {
+      const next = !prev;
+      showToast(next ? 'Grouping enabled' : 'Grouping disabled');
+      return next;
+    });
+  }, []);
 
   const [isConsolePaused, setIsConsolePaused] = useState<boolean>(false);
   const isConsolePausedRef = useRef(isConsolePaused);
@@ -411,6 +420,7 @@ const NetworkInspector = ({
     });
     setShowDuplicateLogs(false);
     setShowUpdateToast(true);
+    setIsApiGroupingEnabled(true);
     Alert.alert('Settings Reset', 'All settings have been reset to default values.');
   };
 
@@ -452,6 +462,8 @@ const NetworkInspector = ({
         setShowDuplicateLogs(saved.showDuplicateLogs);
       if (saved.showUpdateToast != null)
         setShowUpdateToast(saved.showUpdateToast);
+      if (saved.isApiGroupingEnabled != null)
+        setIsApiGroupingEnabled(saved.isApiGroupingEnabled);
       if (saved.defaultTab) {
         const dt = saved.defaultTab as ActiveTab;
         const vis = {
@@ -495,6 +507,7 @@ const NetworkInspector = ({
       showConsoleLevels,
       showDuplicateLogs,
       showUpdateToast,
+      isApiGroupingEnabled,
     });
   }, [
     isDark,
@@ -509,6 +522,8 @@ const NetworkInspector = ({
     isAutoRamLimitEnabled,
     showConsoleLevels,
     showDuplicateLogs,
+    showUpdateToast,
+    isApiGroupingEnabled,
   ]);
 
   // #1 — check NPM for a newer published version; surfaces an animated dot
@@ -1295,6 +1310,16 @@ const NetworkInspector = ({
   }, []);
 
   const groupedData = useMemo(() => {
+    if (!isApiGroupingEnabled) {
+      return filteredLogs.map((log, index) => ({
+        type: 'log' as const,
+        id: log.id,
+        log,
+        isLast: index === filteredLogs.length - 1,
+        color: '#A855F7',
+      }));
+    }
+
     const result: GroupedListItem[] = [];
     const groups: {pageName: string; color: string; logs: NetworkLog[]}[] = [];
 
@@ -1363,7 +1388,7 @@ const NetworkInspector = ({
     });
 
     return result;
-  }, [filteredLogs, logs, sectionFilters, collapsedSections]);
+  }, [filteredLogs, logs, sectionFilters, collapsedSections, isApiGroupingEnabled]);
 
   const {minStart, totalRange} = useMemo(() => {
     if (filteredLogs.length === 0) return {minStart: 0, totalRange: 0};
@@ -1923,6 +1948,9 @@ const NetworkInspector = ({
     handleDelete,
     isNetworkPaused,
     setIsNetworkPaused,
+    isApiGroupingEnabled,
+    setIsApiGroupingEnabled,
+    toggleApiGrouping,
 
     // ─── Network detail ─────────────────────────────────────────────────
     detailTitle,

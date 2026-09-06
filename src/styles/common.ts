@@ -114,11 +114,13 @@ const buildCommonStyles = (colors: any) => {
     },
     subTabPillText: {
       fontFamily: AppFonts.interMedium,
+      fontWeight: '500',
       fontSize: 12,
       color: colors.grayTextStrong,
     },
     subTabPillTextActive: {
       fontFamily: AppFonts.interBold,
+      fontWeight: '700',
       fontSize: 12,
       color: colors.white,
     },

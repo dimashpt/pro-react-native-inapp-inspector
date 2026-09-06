@@ -55,6 +55,7 @@ import {
   SmartphoneIcon,
   DatabaseIcon,
   QrCodeIcon,
+  KeyIcon,
 } from '../NetworkIcons';
 import {LIB_VERSION} from '../../constants';
 import {copyToClipboard, isLocalDebugEnvironment} from '../../helpers';
@@ -184,6 +185,13 @@ const SettingsPanel = () => {
             desc: 'AsyncStorage & MMKV key-value store viewer with full CRUD support',
           },
           {
+            key: 'env',
+            label: 'ENV Variables',
+            category: 'diagnostic',
+            icon: 'env',
+            desc: 'Environment variables from process.env, native configs, or custom props',
+          },
+          {
             key: 'debugging',
             label: 'Multi-Device Debugging',
             category: 'diagnostic',
@@ -211,6 +219,7 @@ const SettingsPanel = () => {
     crash: Boolean(tabVisibility?.crash),
     device: Boolean(tabVisibility?.device),
     storage: Boolean(tabVisibility?.storage),
+    env: Boolean(tabVisibility?.env),
     debugging: Boolean(tabVisibility?.debugging),
   }));
 
@@ -225,6 +234,7 @@ const SettingsPanel = () => {
       crash: Boolean(tabVisibility?.crash),
       device: Boolean(tabVisibility?.device),
       storage: Boolean(tabVisibility?.storage),
+      env: Boolean(tabVisibility?.env),
       debugging: Boolean(tabVisibility?.debugging),
     });
   }, [tabVisibility]);
@@ -802,6 +812,16 @@ const SettingsPanel = () => {
                           )}
                           {moduleItem.icon === 'storage' && (
                             <DatabaseIcon
+                              color={
+                                isChecked
+                                  ? AppColors.purple
+                                  : AppColors.grayTextWeak
+                              }
+                              size={16}
+                            />
+                          )}
+                          {moduleItem.icon === 'env' && (
+                            <KeyIcon
                               color={
                                 isChecked
                                   ? AppColors.purple

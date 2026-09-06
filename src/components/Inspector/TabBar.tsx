@@ -21,6 +21,7 @@ import {
   SmartphoneIcon,
   DatabaseIcon,
   QrCodeIcon,
+  KeyIcon,
 } from '../NetworkIcons';
 
 import {isAnalyticsConnected} from '../../customHooks/analyticsLogger';
@@ -48,8 +49,7 @@ const TabBar = React.memo(() => {
     <View style={styles.tabBarContainer}>
       <ScrollView
         horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{paddingRight: 16}}>
+        showsHorizontalScrollIndicator={false}>
         {(
           [
             {
@@ -63,6 +63,18 @@ const TabBar = React.memo(() => {
               label: 'Logs',
               count: consoleLogs.length,
               icon: 'logs',
+            },
+            {
+              key: 'storage',
+              label: 'Storage',
+              count: 0,
+              icon: 'storage',
+            },
+            {
+              key: 'env',
+              label: 'ENV Variables',
+              count: 0,
+              icon: 'env',
             },
             {
               key: 'analytics',
@@ -93,12 +105,6 @@ const TabBar = React.memo(() => {
               label: 'Device',
               count: 0,
               icon: 'device',
-            },
-            {
-              key: 'storage',
-              label: 'Storage',
-              count: 0,
-              icon: 'storage',
             },
             {
               key: 'debugging',
@@ -177,6 +183,9 @@ const TabBar = React.memo(() => {
                   )}
                   {tab.icon === 'storage' && (
                     <DatabaseIcon color={iconColor} size={14} />
+                  )}
+                  {tab.icon === 'env' && (
+                    <KeyIcon color={iconColor} size={14} />
                   )}
                   {tab.icon === 'debugging' && (
                     <QrCodeIcon color={iconColor} size={14} />

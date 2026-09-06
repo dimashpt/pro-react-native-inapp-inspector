@@ -73,6 +73,13 @@
       "require": "./dist/commonjs/storage.js",
       "default": "./dist/commonjs/storage.js"
     },
+    "./env": {
+      "react-native": "./dist/commonjs/env.js",
+      "types": "./dist/commonjs/env.d.ts",
+      "import": "./dist/esm/env.js",
+      "require": "./dist/commonjs/env.js",
+      "default": "./dist/commonjs/env.js"
+    },
     "./metro": {
       "types": "./dist/commonjs/metro.d.ts",
       "import": "./dist/esm/metro.js",

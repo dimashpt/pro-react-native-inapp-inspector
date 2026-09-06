@@ -27,6 +27,7 @@ import CrashTab from './CrashTab';
 import CrashDetail from './CrashDetail';
 import DeviceInfoTab from './DeviceInfoTab';
 import StorageTab from './StorageTab';
+import EnvVariablesTab from './EnvVariablesTab';
 import DebuggingTab from './DebuggingTab';
 import SettingsPanel from './SettingsPanel';
 import NpmUpdateToast from './NpmUpdateToast';
@@ -163,6 +164,7 @@ const MainScreen = () => {
                       {activeTab === 'crash' && <CrashTab />}
                       {activeTab === 'device' && <DeviceInfoTab />}
                       {activeTab === 'storage' && <StorageTab />}
+                      {activeTab === 'env' && <EnvVariablesTab />}
                       {Platform.OS === 'android' &&
                         isLocalDebugEnvironment() &&
                         activeTab === 'debugging' && <DebuggingTab />}

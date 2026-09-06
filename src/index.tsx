@@ -137,10 +137,12 @@ import {LIB_VERSION} from './constants';
 
 // Stylesheet
 import {toggleGlobalTheme} from './styles';
+import {setCustomEnvVariables} from './customHooks/envInspector';
 
 const NetworkInspector = ({
   enabled = true,
   storage,
+  envVariables,
   appIcon,
   environment,
   initialVisible = false,
@@ -148,6 +150,7 @@ const NetworkInspector = ({
 }: NetworkInspectorProps): React.JSX.Element | null => {
   // Set custom storage synchronously during render phase
   setCustomStorage(storage || null);
+  setCustomEnvVariables(envVariables || null);
 
   const [isDark, setIsDark] = useState(false);
   // Inspector panel height as a percentage of the screen (configurable in Settings).
@@ -326,6 +329,7 @@ const NetworkInspector = ({
     crash: false,
     device: false,
     storage: false,
+    env: true,
     debugging: false,
   });
 
@@ -385,6 +389,7 @@ const NetworkInspector = ({
       crash: false,
       device: false,
       storage: false,
+      env: true,
       debugging: false,
     });
     setDefaultTab('apis');
@@ -454,6 +459,7 @@ const NetworkInspector = ({
             crash: false,
             device: false,
             storage: false,
+            env: true,
           },
           ...(saved.tabVisibility || {}),
           apis: true,
@@ -1839,6 +1845,7 @@ const NetworkInspector = ({
     isEnabled: enabled,
     appIcon,
     environment,
+    envVariables,
     modalHeightPercent,
     setModalHeightPercent,
     modalAnimationType,
@@ -2205,6 +2212,22 @@ export {
   type StorageEntry,
   type StorageDriver,
 } from './customHooks/storageInspector';
+
+export {
+  connectEnvVariables,
+  setCustomEnvVariables,
+  fetchEnvEntries,
+  setEnvOverride,
+  removeEnvOverride,
+  clearEnvOverrides,
+  getEnvOverridesCount,
+  subscribeToEnvChanges,
+  exportEnvAsDotEnv,
+  exportEnvAsJson,
+  isSecretKey,
+  maskSecretValue,
+} from './customHooks/envInspector';
+export type {EnvEntry} from './types';
 
 export {
   ActiveTab,

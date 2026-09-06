@@ -168,6 +168,7 @@ export interface NetworkInspectorProps {
   enabled?: boolean;
   telemetry?: boolean;
   storage?: InspectorStorage;
+  envVariables?: Record<string, any>;
   appIcon?: any;
   environment?: 'DEV' | 'UAT' | 'PrePROD' | 'PROD' | 'QA' | 'Staging' | string;
   initialVisible?: boolean;
@@ -185,6 +186,7 @@ export interface InspectorContextValue {
   isEnabled: boolean;
   appIcon?: any;
   environment?: string;
+  envVariables?: Record<string, any>;
   modalHeightPercent: number;
   setModalHeightPercent: React.Dispatch<React.SetStateAction<number>>;
   modalAnimationType: 'slide' | 'fade' | 'none';
@@ -470,4 +472,14 @@ export interface ErrorBoundaryProps {
 export interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
+}
+
+export interface EnvEntry {
+  key: string;
+  value: string;
+  rawValue: any;
+  type: 'string' | 'number' | 'boolean' | 'json' | 'null' | 'empty';
+  source: 'process.env' | 'react-native-config' | 'custom' | 'override' | 'system';
+  isSecret: boolean;
+  isOverridden?: boolean;
 }

@@ -40,7 +40,8 @@
     "performance": "Performance",
     "crash": "Crash",
     "device": "Device",
-    "storage": "Storage"
+    "storage": "Storage",
+    "env": "ENV Variables"
   },
   "settings": {
     "mainTitle": "Settings & Modules",

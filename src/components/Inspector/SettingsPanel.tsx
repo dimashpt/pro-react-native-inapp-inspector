@@ -1603,6 +1603,7 @@ const SettingsPanel = () => {
                             accessibilityLabel={`Select ${tab.label} as default tab`}
                             onPress={() => {
                               setDefaultTab(tab.key);
+                              switchActiveTab(tab.key);
                               setIsDefaultTabDropdownOpen(false);
                             }}
                             style={{

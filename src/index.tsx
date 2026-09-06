@@ -220,6 +220,7 @@ const NetworkInspector = ({
 
   // ─── Analytics state ───────────────────────────────────────────────────────
   const [activeTab, setActiveTab] = useState<ActiveTab>('apis');
+  const hasUserChangedTabRef = useRef<boolean>(false);
   const [analyticsEvents, setAnalyticsEvents] = useState<AnalyticsEvent[]>([]);
 
   // ─── Logs state ────────────────────────────────────────────────────────────
@@ -407,6 +408,8 @@ const NetworkInspector = ({
       debugging: false,
     });
     setDefaultTab('apis');
+    setActiveTab('apis');
+    hasUserChangedTabRef.current = false;
     setIsAutoRamLimitEnabled(true);
     const profile = calculateRamBasedLimits(deviceFreeRamMb);
     setMaxCrashLogs(profile.maxCrashRecords);
@@ -464,25 +467,39 @@ const NetworkInspector = ({
         setShowUpdateToast(saved.showUpdateToast);
       if (saved.isApiGroupingEnabled != null)
         setIsApiGroupingEnabled(saved.isApiGroupingEnabled);
-      if (saved.defaultTab) {
-        const dt = saved.defaultTab as ActiveTab;
-        const vis = {
-          ...{
-            apis: true,
-            logs: true,
-            analytics: false,
-            bundle: false,
-            performance: false,
-            crash: false,
-            device: false,
-            storage: false,
-            env: true,
-            reactQuery: true,
-          },
-          ...(saved.tabVisibility || {}),
+      const vis = {
+        ...{
           apis: true,
-        } as Record<ActiveTab, boolean>;
-        setActiveTab(vis[dt] ? dt : 'apis');
+          logs: true,
+          analytics: false,
+          bundle: false,
+          performance: false,
+          crash: false,
+          device: false,
+          storage: false,
+          env: true,
+          reactQuery: true,
+          debugging: false,
+        },
+        ...(saved.tabVisibility || {}),
+        apis: true,
+      } as Record<ActiveTab, boolean>;
+      const tabToRestore = (saved.activeTab || saved.defaultTab) as
+        | ActiveTab
+        | undefined;
+      if (
+        tabToRestore &&
+        vis[tabToRestore] &&
+        (tabToRestore !== 'analytics' || isAnalyticsConnected())
+      ) {
+        if (!hasUserChangedTabRef.current) {
+          setActiveTab(tabToRestore);
+        }
+      } else if (saved.defaultTab) {
+        const dt = saved.defaultTab as ActiveTab;
+        if (!hasUserChangedTabRef.current) {
+          setActiveTab(vis[dt] ? dt : 'apis');
+        }
       }
       settingsHydratedRef.current = true;
     });
@@ -499,6 +516,7 @@ const NetworkInspector = ({
       modalAnimationType,
       tabVisibility,
       defaultTab,
+      activeTab,
       maxNetworkLogs,
       maxConsoleLogs,
       maxAnalyticsEventsLimit,
@@ -515,6 +533,7 @@ const NetworkInspector = ({
     modalAnimationType,
     tabVisibility,
     defaultTab,
+    activeTab,
     maxNetworkLogs,
     maxConsoleLogs,
     maxAnalyticsEventsLimit,
@@ -607,6 +626,7 @@ const NetworkInspector = ({
 
   const switchActiveTab = useCallback((key: ActiveTab) => {
     if (key === 'analytics' && !isAnalyticsConnected()) return;
+    hasUserChangedTabRef.current = true;
 
     setSelected(null);
     setSelectedEvent(null);
@@ -919,18 +939,23 @@ const NetworkInspector = ({
 
   const isVisibleRefObj = useRef(visible);
 
-  // #6 — every time the inspector is opened, land on chosen default tab & sync latest logs
+  // Synchronize data when the inspector is opened, preserving the active tab
   useEffect(() => {
     isVisibleRefObj.current = visible;
     if (visible) {
-      const target =
-        defaultTab === 'apis' || tabVisibility?.[defaultTab]
+      setActiveTab(current => {
+        if (!tabVisibility) return current;
+        const isCurrentValid =
+          current === 'apis' ||
+          (Boolean(tabVisibility[current]) &&
+            (current !== 'analytics' || isAnalyticsConnected()));
+        if (isCurrentValid) {
+          return current;
+        }
+        return defaultTab === 'apis' || tabVisibility[defaultTab]
           ? defaultTab
           : 'apis';
-      setActiveTab(target);
-
-
-
+      });
       // Instant synchronization of data collected while modal was closed
       if (latestNetworkLogsRef.current.length > 0) {
         const deduped = deduplicateLogs(latestNetworkLogsRef.current);
@@ -1729,6 +1754,7 @@ const NetworkInspector = ({
     setSelectedEvent(null);
     setSelectedLog(null);
     setSelectedCrash(null);
+    setSettingsPage(null);
   }
 
   function handleClearAll() {

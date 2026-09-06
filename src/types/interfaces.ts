@@ -150,6 +150,7 @@ export interface PersistedSettings {
   modalAnimationType?: string;
   tabVisibility?: Record<string, boolean>;
   defaultTab?: string;
+  activeTab?: string;
   maxNetworkLogs?: number;
   maxConsoleLogs?: number;
   maxAnalyticsEventsLimit?: number;

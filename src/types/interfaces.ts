@@ -169,6 +169,7 @@ export interface NetworkInspectorProps {
   telemetry?: boolean;
   storage?: InspectorStorage;
   envVariables?: Record<string, any>;
+  queryClient?: any;
   appIcon?: any;
   environment?: 'DEV' | 'UAT' | 'PrePROD' | 'PROD' | 'QA' | 'Staging' | string;
   initialVisible?: boolean;
@@ -187,6 +188,7 @@ export interface InspectorContextValue {
   appIcon?: any;
   environment?: string;
   envVariables?: Record<string, any>;
+  queryClient?: any;
   modalHeightPercent: number;
   setModalHeightPercent: React.Dispatch<React.SetStateAction<number>>;
   modalAnimationType: 'slide' | 'fade' | 'none';

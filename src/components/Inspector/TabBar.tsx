@@ -22,6 +22,7 @@ import {
   DatabaseIcon,
   QrCodeIcon,
   KeyIcon,
+  ReactQueryIcon,
 } from '../NetworkIcons';
 
 import {isAnalyticsConnected} from '../../customHooks/analyticsLogger';
@@ -75,6 +76,12 @@ const TabBar = React.memo(() => {
               label: 'ENV Variables',
               count: 0,
               icon: 'env',
+            },
+            {
+              key: 'reactQuery',
+              label: 'React Query',
+              count: 0,
+              icon: 'reactQuery',
             },
             {
               key: 'analytics',
@@ -186,6 +193,9 @@ const TabBar = React.memo(() => {
                   )}
                   {tab.icon === 'env' && (
                     <KeyIcon color={iconColor} size={14} />
+                  )}
+                  {tab.icon === 'reactQuery' && (
+                    <ReactQueryIcon color={iconColor} size={14} />
                   )}
                   {tab.icon === 'debugging' && (
                     <QrCodeIcon color={iconColor} size={14} />

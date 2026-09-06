@@ -138,11 +138,13 @@ import {LIB_VERSION} from './constants';
 // Stylesheet
 import {toggleGlobalTheme} from './styles';
 import {setCustomEnvVariables} from './customHooks/envInspector';
+import {connectQueryClient} from './customHooks/reactQueryInspector';
 
 const NetworkInspector = ({
   enabled = true,
   storage,
   envVariables,
+  queryClient,
   appIcon,
   environment,
   initialVisible = false,
@@ -151,6 +153,7 @@ const NetworkInspector = ({
   // Set custom storage synchronously during render phase
   setCustomStorage(storage || null);
   setCustomEnvVariables(envVariables || null);
+  if (queryClient) connectQueryClient(queryClient);
 
   const [isDark, setIsDark] = useState(false);
   // Inspector panel height as a percentage of the screen (configurable in Settings).
@@ -330,6 +333,7 @@ const NetworkInspector = ({
     device: false,
     storage: false,
     env: true,
+    reactQuery: true,
     debugging: false,
   });
 
@@ -390,6 +394,7 @@ const NetworkInspector = ({
       device: false,
       storage: false,
       env: true,
+      reactQuery: true,
       debugging: false,
     });
     setDefaultTab('apis');
@@ -460,6 +465,7 @@ const NetworkInspector = ({
             device: false,
             storage: false,
             env: true,
+            reactQuery: true,
           },
           ...(saved.tabVisibility || {}),
           apis: true,
@@ -1846,6 +1852,7 @@ const NetworkInspector = ({
     appIcon,
     environment,
     envVariables,
+    queryClient,
     modalHeightPercent,
     setModalHeightPercent,
     modalAnimationType,
@@ -2228,6 +2235,28 @@ export {
   maskSecretValue,
 } from './customHooks/envInspector';
 export type {EnvEntry} from './types';
+
+export {
+  connectQueryClient,
+  getResolvedQueryClient,
+  getOnlineManager,
+  useAllQueries,
+  useAllMutations,
+  getQueryStatus,
+  formatQueryKey,
+  formatRelativeTime,
+  refetchQuery,
+  invalidateQuery,
+  resetQuery,
+  removeQuery,
+  triggerQueryLoading,
+  triggerQueryError,
+  clearQueryCache,
+  invalidateAllQueries,
+  refetchAllActiveQueries,
+  type QueryStatusType,
+} from './customHooks/reactQueryInspector';
+export {default as ReactQueryTab} from './components/Inspector/ReactQueryTab';
 
 export {
   ActiveTab,

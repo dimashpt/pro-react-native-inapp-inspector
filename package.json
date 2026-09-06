@@ -80,6 +80,13 @@
       "require": "./dist/commonjs/env.js",
       "default": "./dist/commonjs/env.js"
     },
+    "./react-query": {
+      "react-native": "./dist/commonjs/react-query.js",
+      "types": "./dist/commonjs/react-query.d.ts",
+      "import": "./dist/esm/react-query.js",
+      "require": "./dist/commonjs/react-query.js",
+      "default": "./dist/commonjs/react-query.js"
+    },
     "./metro": {
       "types": "./dist/commonjs/metro.d.ts",
       "import": "./dist/esm/metro.js",
@@ -161,11 +168,18 @@
     "url": "https://github.com/sponsors/vengatmacuser"
   },
   "peerDependencies": {
+    "@tanstack/react-query": ">=4.0.0 || >=5.0.0",
     "react": ">=18.0.0",
     "react-native": ">=0.60.0",
     "react-native-svg": ">=12.0.0"
   },
+  "peerDependenciesMeta": {
+    "@tanstack/react-query": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "@tanstack/react-query": "^5.102.8",
     "@types/react": "19.1.0",
     "@types/react-native": "0.72.0",
     "axios": "1.7.2",

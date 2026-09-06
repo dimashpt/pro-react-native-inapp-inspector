@@ -2355,3 +2355,25 @@ export const TurtleIcon = ({
   </Svg>
 );
 
+export const ReactQueryIcon = ({
+  color = '#FF4154',
+  size = 14,
+}: IconProps) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Circle cx="12" cy="12" r="3.2" fill={color} />
+    <Circle cx="12" cy="4" r="2.2" fill={color} />
+    <Circle cx="18.9" cy="8" r="2.2" fill={color} />
+    <Circle cx="18.9" cy="16" r="2.2" fill={color} />
+    <Circle cx="12" cy="20" r="2.2" fill={color} />
+    <Circle cx="5.1" cy="16" r="2.2" fill={color} />
+    <Circle cx="5.1" cy="8" r="2.2" fill={color} />
+    <Path
+      d="M12 6.5v2.3M16.9 9.2l-2 1.2M16.9 14.8l-2-1.2M12 17.5v-2.3M7.1 14.8l2-1.2M7.1 9.2l2 1.2"
+      stroke={color}
+      strokeWidth="1.6"
+      strokeLinecap="round"
+    />
+  </Svg>
+);
+
+

@@ -41,7 +41,8 @@
     "crash": "Crash",
     "device": "Device",
     "storage": "Storage",
-    "env": "ENV Variables"
+    "env": "ENV Variables",
+    "reactQuery": "React Query"
   },
   "settings": {
     "mainTitle": "Settings & Modules",

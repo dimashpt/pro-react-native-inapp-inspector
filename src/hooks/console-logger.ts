@@ -176,7 +176,7 @@ const isLoggerInternal = (line: string): boolean => {
     l.includes('consolelogger') ||
     l.includes('setupconsolelogger') ||
     l.includes('formatargs') ||
-    l.includes('react-native-inapp-inspector') ||
+    l.includes('react-native-inapp-debugger') ||
     l.trim() === 'error'
   );
 };
@@ -309,8 +309,8 @@ const addLog = (
                 file.includes('customHooks/consoleLogger') ||
                 file.includes('setupConsoleLogger') ||
                 file.includes('getStackDetails') ||
-                file.includes('react-native-inapp-inspector/dist') ||
-                file.includes('react-native-inapp-inspector/src') ||
+                file.includes('react-native-inapp-debugger/dist') ||
+                file.includes('react-native-inapp-debugger/src') ||
                 method === 'getStackDetails' ||
                 method === 'addLog' ||
                 (method === 'log' && file.includes('console-logger'));

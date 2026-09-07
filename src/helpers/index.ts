@@ -815,7 +815,7 @@ export const parseStackLine = (
   const isDependency =
     cleanPath.includes('node_modules') ||
     cleanPath.includes('react-native/Libraries') ||
-    (cleanPath.includes('react-native-inapp-inspector') &&
+    (cleanPath.includes('react-native-inapp-debugger') &&
       !cleanPath.includes('/example/'));
 
   const isUserCode =

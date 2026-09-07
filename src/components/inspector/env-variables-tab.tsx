@@ -758,7 +758,7 @@ export const EnvVariablesTab = React.memo(() => {
             <View style={styles.connectGuideCard}>
               <Text style={styles.connectGuideTitle}>💡 How to connect your env:</Text>
               <Text style={styles.connectGuideCode}>
-                {`// Option 1: Pass to <NetworkInspector />\n<NetworkInspector envVariables={process.env} />\n\n// Option 2: Register globally\nimport { connectEnvVariables } from 'react-native-inapp-inspector';\nconnectEnvVariables(process.env);`}
+                {`// Option 1: Pass to <NetworkInspector />\n<NetworkInspector envVariables={process.env} />\n\n// Option 2: Register globally\nimport { connectEnvVariables } from 'react-native-inapp-debugger';\nconnectEnvVariables(process.env);`}
               </Text>
             </View>
           )}

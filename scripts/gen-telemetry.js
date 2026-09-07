@@ -29,7 +29,7 @@ if (envExists) {
   }
 }
 
-const PKG_NAME = 'react-native-inapp-inspector';
+const PKG_NAME = 'react-native-inapp-debugger';
 const SALT = 'rn-inapp-inspector-telemetry-v1';
 const KEY_MATERIAL = `${PKG_NAME}::${SALT}`;
 

@@ -312,7 +312,7 @@ export function stopGradleBuild(): BuildJob {
 }
 
 /**
- * Metro Bundler Middleware for react-native-inapp-inspector.
+ * Metro Bundler Middleware for react-native-inapp-debugger.
  * Automatically serves debug APK directly from Metro dev server (port 8081)
  * with ZERO extra commands or servers needed.
  * Dynamic IP, port, and APK filename detection included.

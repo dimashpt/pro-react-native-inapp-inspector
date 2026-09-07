@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/react-native-inapp-inspector"><img src="https://img.shields.io/npm/v/react-native-inapp-inspector?color=6366f1&label=npm" alt="npm version" /></a>
-  <a href="https://www.npmjs.com/package/react-native-inapp-inspector"><img src="https://img.shields.io/npm/dm/react-native-inapp-inspector?color=3b82f6&label=downloads" alt="npm downloads" /></a>
+  <a href="https://www.npmjs.com/package/react-native-inapp-debugger"><img src="https://img.shields.io/npm/v/react-native-inapp-debugger?color=6366f1&label=npm" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/react-native-inapp-debugger"><img src="https://img.shields.io/npm/dm/react-native-inapp-debugger?color=3b82f6&label=downloads" alt="npm downloads" /></a>
   <a href="https://github.com/vengatmacuser/react-native-inapp-inspector/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="license" /></a>
   <a href="https://github.com/vengatmacuser/react-native-inapp-inspector"><img src="https://img.shields.io/badge/platform-iOS%20%7C%20Android%20%7C%20Expo-blue" alt="platform" /></a>
   <a href="https://github.com/vengatmacuser/react-native-inapp-inspector"><img src="https://img.shields.io/badge/TypeScript-Ready-3178c6" alt="TypeScript" /></a>
@@ -72,9 +72,9 @@ The **zero-config, all-in-one in-app debugging overlay for React Native & Expo**
 Install the package and Axios using npm or yarn:
 
 ```bash
-npm install --save-dev react-native-inapp-inspector axios
+npm install --save-dev react-native-inapp-debugger axios
 # or
-yarn add -D react-native-inapp-inspector axios
+yarn add -D react-native-inapp-debugger axios
 ```
 
 For iOS, install CocoaPods dependencies:
@@ -88,7 +88,7 @@ cd ios && pod install
 Install using Expo CLI:
 
 ```bash
-npx expo install react-native-inapp-inspector react-native-svg
+npx expo install react-native-inapp-debugger react-native-svg
 ```
 
 ### Peer Dependencies
@@ -111,7 +111,7 @@ Mount `<NetworkInspector />` near the root of your application (such as `App.tsx
 ```tsx
 import React from 'react';
 import { SafeAreaView } from 'react-native';
-import NetworkInspector from 'react-native-inapp-inspector';
+import NetworkInspector from 'react-native-inapp-debugger';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { QueryClient } from '@tanstack/react-query';
 
@@ -144,7 +144,7 @@ If your application triggers network requests or console logs before React compo
 import {
   setupNetworkLogger,
   setupConsoleLogger,
-} from 'react-native-inapp-inspector';
+} from 'react-native-inapp-debugger';
 
 // Initialize before React renders
 setupNetworkLogger();
@@ -169,7 +169,7 @@ The Network module hooks into the global `fetch` API and intercepts Axios instan
 - **Live Stream Controls**: Pause incoming traffic streams to inspect payloads without list jumping, or search by endpoint/query string.
 
 ```typescript
-import { setupNetworkLogger, addAxiosInterceptors } from 'react-native-inapp-inspector';
+import { setupNetworkLogger, addAxiosInterceptors } from 'react-native-inapp-debugger';
 
 setupNetworkLogger();
 
@@ -203,7 +203,7 @@ Inspect, search, edit, and delete persisted key-value storage directly from your
 
 ```tsx
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import NetworkInspector from 'react-native-inapp-inspector';
+import NetworkInspector from 'react-native-inapp-debugger';
 
 <NetworkInspector storage={AsyncStorage} />
 ```
@@ -211,7 +211,7 @@ import NetworkInspector from 'react-native-inapp-inspector';
 Or programmatically via the submodule:
 
 ```typescript
-import { connectAsyncStorage } from 'react-native-inapp-inspector/storage';
+import { connectAsyncStorage } from 'react-native-inapp-debugger/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 connectAsyncStorage(AsyncStorage);
@@ -220,7 +220,7 @@ connectAsyncStorage(AsyncStorage);
 #### Connecting MMKV
 
 ```typescript
-import { connectMMKV } from 'react-native-inapp-inspector/storage';
+import { connectMMKV } from 'react-native-inapp-debugger/storage';
 import { MMKV } from 'react-native-mmkv';
 
 const storage = new MMKV();
@@ -240,7 +240,7 @@ connectMMKV(storage);
 Inspect active runtime configuration and environment flags:
 
 ```tsx
-import NetworkInspector from 'react-native-inapp-inspector';
+import NetworkInspector from 'react-native-inapp-debugger';
 
 // Pass process.env or a custom configuration object
 <NetworkInspector
@@ -256,7 +256,7 @@ import NetworkInspector from 'react-native-inapp-inspector';
 Or connect programmatically:
 
 ```typescript
-import { connectEnvVariables } from 'react-native-inapp-inspector/env';
+import { connectEnvVariables } from 'react-native-inapp-debugger/env';
 
 connectEnvVariables({
   API_URL: 'https://api.example.com',
@@ -279,7 +279,7 @@ Ported directly to match this inspector's native theme and UX, giving you on-dev
 
 ```tsx
 import { QueryClient } from '@tanstack/react-query';
-import NetworkInspector from 'react-native-inapp-inspector';
+import NetworkInspector from 'react-native-inapp-debugger';
 
 const queryClient = new QueryClient();
 
@@ -289,7 +289,7 @@ const queryClient = new QueryClient();
 Or register globally:
 
 ```typescript
-import { connectQueryClient } from 'react-native-inapp-inspector/react-query';
+import { connectQueryClient } from 'react-native-inapp-debugger/react-query';
 
 connectQueryClient(queryClient);
 ```
@@ -311,7 +311,7 @@ connectQueryClient(queryClient);
 Access device performance metrics via the native Kotlin / Objective-C bridge:
 
 ```typescript
-import { getNativeDeviceMetrics } from 'react-native-inapp-inspector';
+import { getNativeDeviceMetrics } from 'react-native-inapp-debugger';
 
 const metrics = await getNativeDeviceMetrics();
 
@@ -343,7 +343,7 @@ Debug embedded WebViews inside your React Native application:
 Prevent unexpected JavaScript exceptions and native crashes from killing your development builds:
 
 ```tsx
-import { ErrorBoundary, enableNativeCrashProtection, subscribeNativeCrashes } from 'react-native-inapp-inspector';
+import { ErrorBoundary, enableNativeCrashProtection, subscribeNativeCrashes } from 'react-native-inapp-debugger';
 
 // Enable native crash handler
 enableNativeCrashProtection();
@@ -371,7 +371,7 @@ Analyze JavaScript bundle composition to detect accidental bloat:
 
 - Run via CLI:
   ```bash
-  npx react-native-inapp-inspector
+  npx react-native-inapp-debugger
   # or
   npm run bundle-visualizer
   ```
@@ -401,19 +401,19 @@ Analyze JavaScript bundle composition to detect accidental bloat:
 
 ## 📦 Submodule Imports
 
-`react-native-inapp-inspector` provides modular entry points for minimal bundle footprint:
+`react-native-inapp-debugger` provides modular entry points for minimal bundle footprint:
 
 | Import Path | Description |
 | :--- | :--- |
-| `react-native-inapp-inspector` | Main entry point containing `<NetworkInspector />`, setup hooks, and all utilities. |
-| `react-native-inapp-inspector/network` | Network interceptor, `setupNetworkLogger`, `clearNetworkLogs`, `subscribeNetworkLogs`. |
-| `react-native-inapp-inspector/console` | Console interceptor, `setupConsoleLogger`, `clearConsoleLogs`, `subscribeConsoleLogs`. |
-| `react-native-inapp-inspector/storage` | Storage utilities, `connectAsyncStorage`, `connectMMKV`, `getStorageAdapter`. |
-| `react-native-inapp-inspector/env` | Environment variable registry, `connectEnvVariables`, `getEnvVariables`. |
-| `react-native-inapp-inspector/react-query` | React Query bridge, `connectQueryClient`, `getQueryClient`. |
-| `react-native-inapp-inspector/crash` | Crash catcher, `enableNativeCrashProtection`, `subscribeNativeCrashes`, `ErrorBoundary`. |
-| `react-native-inapp-inspector/performance` | Hardware metrics bridge, `getNativeDeviceMetrics`. |
-| `react-native-inapp-inspector/bundle` | JS bundle and Hermes analyzer utilities. |
+| `react-native-inapp-debugger` | Main entry point containing `<NetworkInspector />`, setup hooks, and all utilities. |
+| `react-native-inapp-debugger/network` | Network interceptor, `setupNetworkLogger`, `clearNetworkLogs`, `subscribeNetworkLogs`. |
+| `react-native-inapp-debugger/console` | Console interceptor, `setupConsoleLogger`, `clearConsoleLogs`, `subscribeConsoleLogs`. |
+| `react-native-inapp-debugger/storage` | Storage utilities, `connectAsyncStorage`, `connectMMKV`, `getStorageAdapter`. |
+| `react-native-inapp-debugger/env` | Environment variable registry, `connectEnvVariables`, `getEnvVariables`. |
+| `react-native-inapp-debugger/react-query` | React Query bridge, `connectQueryClient`, `getQueryClient`. |
+| `react-native-inapp-debugger/crash` | Crash catcher, `enableNativeCrashProtection`, `subscribeNativeCrashes`, `ErrorBoundary`. |
+| `react-native-inapp-debugger/performance` | Hardware metrics bridge, `getNativeDeviceMetrics`. |
+| `react-native-inapp-debugger/bundle` | JS bundle and Hermes analyzer utilities. |
 
 ---
 

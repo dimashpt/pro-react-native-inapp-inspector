@@ -1,5 +1,5 @@
 /**
- * Sub-module entry point: react-native-inapp-inspector/crash
+ * Sub-module entry point: react-native-inapp-debugger/crash
  * Clean tree-shaking & isolated global crash handler and reporting.
  */
 export {

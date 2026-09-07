@@ -9,7 +9,7 @@ import {
 
 // ─── Runtime Keystream Deobfuscation ────────────────────────────────────────
 
-const PKG_NAME = 'react-native-inapp-inspector';
+const PKG_NAME = 'react-native-inapp-debugger';
 const KEY_MATERIAL = `${PKG_NAME}::${TELEMETRY_SALT}`;
 
 function getKeystream(material: string, length: number): number[] {

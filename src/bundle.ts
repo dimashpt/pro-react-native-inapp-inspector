@@ -1,5 +1,5 @@
 /**
- * Sub-module entry point: react-native-inapp-inspector/bundle
+ * Sub-module entry point: react-native-inapp-debugger/bundle
  * Clean tree-shaking & isolated JS bundle size analyzer.
  */
 export {

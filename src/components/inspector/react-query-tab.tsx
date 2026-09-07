@@ -934,7 +934,7 @@ export default function ReactQueryTab() {
           <View style={styles.guideCard}>
             <Text style={styles.guideTitle}>💡 How to connect QueryClient:</Text>
             <Text style={styles.guideCode}>
-              {`// Option 1: Pass to <NetworkInspector />\n<NetworkInspector queryClient={queryClient} />\n\n// Option 2: Register globally\nimport { connectQueryClient } from 'react-native-inapp-inspector';\nconnectQueryClient(queryClient);`}
+              {`// Option 1: Pass to <NetworkInspector />\n<NetworkInspector queryClient={queryClient} />\n\n// Option 2: Register globally\nimport { connectQueryClient } from 'react-native-inapp-debugger';\nconnectQueryClient(queryClient);`}
             </Text>
           </View>
         </View>

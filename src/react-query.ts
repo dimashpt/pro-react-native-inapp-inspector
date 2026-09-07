@@ -1,5 +1,5 @@
 /**
- * Sub-module entry point: react-native-inapp-inspector/react-query
+ * Sub-module entry point: react-native-inapp-debugger/react-query
  * Universal In-App React Query (TanStack Query) DevTools adapter and utilities.
  */
 export {

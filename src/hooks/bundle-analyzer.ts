@@ -531,8 +531,8 @@ const isExternalPackage = (rawPath: string): {isPkg: boolean; pkgName?: string} 
   }
 
   // 2. React Native In-App Inspector (when linked or embedded)
-  if (rawPath.includes('react-native-inapp-inspector')) {
-    return {isPkg: true, pkgName: 'react-native-inapp-inspector'};
+  if (rawPath.includes('react-native-inapp-debugger')) {
+    return {isPkg: true, pkgName: 'react-native-inapp-debugger'};
   }
 
   // 3. Yarn berry / pnpm virtual stores
@@ -548,9 +548,9 @@ const isExternalPackage = (rawPath: string): {isPkg: boolean; pkgName?: string} 
     rawPath.startsWith('dist/esm/') ||
     rawPath.startsWith('dist/commonjs/') ||
     rawPath.startsWith('dist/') ||
-    rawPath.includes('/react-native-inapp-inspector/dist/')
+    rawPath.includes('/react-native-inapp-debugger/dist/')
   ) {
-    return {isPkg: true, pkgName: 'react-native-inapp-inspector'};
+    return {isPkg: true, pkgName: 'react-native-inapp-debugger'};
   }
 
   return {isPkg: false};

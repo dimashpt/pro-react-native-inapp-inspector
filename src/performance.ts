@@ -1,5 +1,5 @@
 /**
- * Sub-module entry point: react-native-inapp-inspector/performance
+ * Sub-module entry point: react-native-inapp-debugger/performance
  * Clean tree-shaking & isolated performance tracker and profiler.
  */
 export {

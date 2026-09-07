@@ -1,5 +1,5 @@
 /**
- * Sub-module entry point: react-native-inapp-inspector/network
+ * Sub-module entry point: react-native-inapp-debugger/network
  * Clean tree-shaking & isolated network logger without UI or React Context dependencies.
  */
 export {

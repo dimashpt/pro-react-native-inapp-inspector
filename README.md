@@ -9,9 +9,9 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/react-native-inapp-inspector"><img src="https://img.shields.io/npm/v/react-native-inapp-inspector?color=6366f1&label=npm" alt="npm version" /></a>
-  <a href="https://www.npmjs.com/package/react-native-inapp-inspector"><img src="https://img.shields.io/npm/dm/react-native-inapp-inspector?color=3b82f6&label=downloads" alt="npm downloads" /></a>
-  <a href="https://bundlephobia.com/package/react-native-inapp-inspector"><img src="https://img.shields.io/bundlephobia/minzip/react-native-inapp-inspector?color=10b981&label=minzipped" alt="bundle size" /></a>
+  <a href="https://www.npmjs.com/package/react-native-inapp-debugger"><img src="https://img.shields.io/npm/v/react-native-inapp-debugger?color=6366f1&label=npm" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/react-native-inapp-debugger"><img src="https://img.shields.io/npm/dm/react-native-inapp-debugger?color=3b82f6&label=downloads" alt="npm downloads" /></a>
+  <a href="https://bundlephobia.com/package/react-native-inapp-debugger"><img src="https://img.shields.io/bundlephobia/minzip/react-native-inapp-debugger?color=10b981&label=minzipped" alt="bundle size" /></a>
   <a href="https://github.com/vengatmacuser/react-native-inapp-inspector/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="license" /></a>
   <a href="https://github.com/vengatmacuser/react-native-inapp-inspector"><img src="https://img.shields.io/badge/platform-iOS%20%7C%20Android%20%7C%20Expo-blue" alt="platform" /></a>
   <a href="https://github.com/vengatmacuser/react-native-inapp-inspector"><img src="https://img.shields.io/badge/TypeScript-Ready-3178c6" alt="TypeScript" /></a>
@@ -27,9 +27,9 @@ The **zero-config, all-in-one in-app debugging overlay for React Native & Expo**
 
 ---
 
-## ⚡ Why Choose `react-native-inapp-inspector`?
+## ⚡ Why Choose `react-native-inapp-debugger`?
 
-| Capability | **react-native-inapp-inspector** | react-native-network-logger | Flipper / RN Debugger |
+| Capability | **react-native-inapp-debugger** | react-native-network-logger | Flipper / RN Debugger |
 | :--- | :---: | :---: | :---: |
 | **Native Module (Kotlin & iOS Bridge)** | ✅ | ❌ | ⚠️ |
 | **Low-Level Hardware & RAM Telemetry** | ✅ | ❌ | ⚠️ |
@@ -72,9 +72,9 @@ The **zero-config, all-in-one in-app debugging overlay for React Native & Expo**
 
 ### Bare React Native
 ```bash
-npm install --save-dev react-native-inapp-inspector axios
+npm install --save-dev react-native-inapp-debugger axios
 # or
-yarn add -D react-native-inapp-inspector axios
+yarn add -D react-native-inapp-debugger axios
 ```
 
 ```bash
@@ -84,7 +84,7 @@ cd ios && pod install
 
 ### Expo Projects
 ```bash
-npx expo install react-native-inapp-inspector react-native-svg
+npx expo install react-native-inapp-debugger react-native-svg
 ```
 
 ### Dependencies
@@ -101,7 +101,7 @@ Mount `<NetworkInspector />` near the root of your application (e.g. in `App.js`
 ```jsx
 import React from 'react';
 import {SafeAreaView} from 'react-native';
-import NetworkInspector from 'react-native-inapp-inspector';
+import NetworkInspector from 'react-native-inapp-debugger';
 
 const App = () => {
   return (
@@ -125,7 +125,7 @@ If your application makes API calls before the root component finishes mounting,
 import NetworkInspector, {
   setupNetworkLogger,
   setupConsoleLogger,
-} from 'react-native-inapp-inspector';
+} from 'react-native-inapp-debugger';
 
 setupNetworkLogger();
 setupConsoleLogger();
@@ -142,7 +142,7 @@ import {
   getNativeDeviceMetrics,
   enableNativeCrashProtection,
   subscribeNativeCrashes
-} from 'react-native-inapp-inspector';
+} from 'react-native-inapp-debugger';
 
 // Fetch hardware & memory metrics
 async function logStats() {
@@ -189,7 +189,7 @@ The console logger provides deep insight into every `console.log`, `info`, `warn
 
 ```javascript
 import axios from 'axios';
-import {setupNetworkLogger} from 'react-native-inapp-inspector';
+import {setupNetworkLogger} from 'react-native-inapp-debugger';
 
 setupNetworkLogger();
 
@@ -337,6 +337,12 @@ This library is a free, open-source utility maintained in spare time. If it save
 👉 **[Sponsor @vengatmacuser on GitHub Sponsors](https://github.com/sponsors/vengatmacuser)**
 
 [![GitHub Sponsors](https://img.shields.io/badge/Sponsor-@vengatmacuser-ea4aaa?logo=githubsponsors&logoColor=white&style=for-the-badge)](https://github.com/sponsors/vengatmacuser)
+
+---
+
+## 🔗 Fork & Credits
+
+This project is a fork of [react-native-inapp-inspector](https://github.com/vengatmacuser/react-native-inapp-inspector) — all credit for the original architecture, feature set, and design goes to its author [@vengatmacuser](https://github.com/vengatmacuser) and contributors.
 
 ---
 

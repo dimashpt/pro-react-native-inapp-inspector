@@ -1,5 +1,5 @@
 /**
- * Sub-module entry point: react-native-inapp-inspector/env
+ * Sub-module entry point: react-native-inapp-debugger/env
  * Universal In-App Environment Variables inspector with process.env, native config, and session overrides.
  */
 export {

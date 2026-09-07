@@ -9,7 +9,7 @@ import NetworkInspector, {
   setupConsoleLogger,
   enableNativeCrashProtection,
   BrandSquareIcon,
-} from 'react-native-inapp-inspector';
+} from 'react-native-inapp-debugger';
 
 import { mockStore } from './src/store/mock-store';
 import { HomeScreen } from './src/screens/home-screen';

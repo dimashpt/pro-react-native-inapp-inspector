@@ -35,7 +35,7 @@ const config = {
       {},
       {
         get: (target, name) => {
-          if (name === 'react-native-inapp-inspector') {
+          if (name === 'react-native-inapp-debugger') {
             return root;
           }
           return path.join(__dirname, 'node_modules', name);

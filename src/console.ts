@@ -1,5 +1,5 @@
 /**
- * Sub-module entry point: react-native-inapp-inspector/console
+ * Sub-module entry point: react-native-inapp-debugger/console
  * Clean tree-shaking & isolated console logger.
  */
 export {

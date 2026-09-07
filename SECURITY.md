@@ -14,7 +14,7 @@ Security updates and patches are actively provided for the following versions:
 
 ## Reporting a Vulnerability
 
-We take the security of **`react-native-inapp-inspector`** seriously. If you believe you have found a security vulnerability, please do **NOT** report it in a public issue.
+We take the security of **`react-native-inapp-debugger`** seriously. If you believe you have found a security vulnerability, please do **NOT** report it in a public issue.
 
 ### How to Report
 
@@ -38,7 +38,7 @@ Please provide:
 
 ## Security Best Practices for Consumers
 
-Because `react-native-inapp-inspector` inspects live network traffic, redux states, and console logs:
+Because `react-native-inapp-debugger` inspects live network traffic, redux states, and console logs:
 
 1. **Production Gating**: Always gate `<InAppInspector />` within `if (__DEV__)` or behind authorized internal build flags so sensitive customer data is never exposed in public app store releases.
 2. **Sensitive Data**: Avoid logging unmasked credentials, private keys, or full credit card numbers in your application's network or redux payloads.

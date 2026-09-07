@@ -1,6 +1,6 @@
 # React Native In-App Inspector Example App 🚀
 
-This directory contains a complete, interactive sample application demonstrating all the capabilities of **`react-native-inapp-inspector`**.
+This directory contains a complete, interactive sample application demonstrating all the capabilities of **`react-native-inapp-debugger`**.
 
 ---
 

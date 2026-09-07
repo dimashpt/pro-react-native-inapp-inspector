@@ -1,5 +1,5 @@
 /**
- * Sub-module entry point: react-native-inapp-inspector/storage
+ * Sub-module entry point: react-native-inapp-debugger/storage
  * Universal AsyncStorage and MMKV live inspector with full CRUD operations.
  */
 export {

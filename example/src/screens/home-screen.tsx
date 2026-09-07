@@ -10,7 +10,7 @@ import {
   getNativeDeviceMetrics,
   isNativeModuleAvailable,
   LIB_VERSION,
-} from 'react-native-inapp-inspector';
+} from 'react-native-inapp-debugger';
 import { mockStore } from '../store/mock-store';
 import { styles } from '../styles/app-styles';
 
@@ -537,7 +537,7 @@ export function HomeScreen({ navigation }: any) {
 
   useEffect(() => {
     // Dynamic live NPM metadata
-    fetch('https://registry.npmjs.org/react-native-inapp-inspector')
+    fetch('https://registry.npmjs.org/react-native-inapp-debugger')
       .then(res => res.json())
       .then(data => {
         const latest = data['dist-tags']?.latest || LIB_VERSION;
@@ -554,7 +554,7 @@ export function HomeScreen({ navigation }: any) {
       .catch(() => setNpmMeta(prev => ({ ...prev, loading: false })));
 
     // Dynamic live NPM downloads
-    fetch('https://api.npmjs.org/downloads/point/last-month/react-native-inapp-inspector')
+    fetch('https://api.npmjs.org/downloads/point/last-month/react-native-inapp-debugger')
       .then(res => res.json())
       .then(data => {
         if (typeof data.downloads === 'number') {
@@ -761,7 +761,7 @@ export function HomeScreen({ navigation }: any) {
           <View style={styles.headerBadgeContainer}>
             <SvgBolt color="#5C2D91" size={12} />
             <Text style={[styles.headerBadge, { marginLeft: 4 }]}>
-              react-native-inapp-inspector
+react-native-inapp-debugger
             </Text>
           </View>
           <Text style={styles.headerTitle}>Playground Workbench</Text>
@@ -1081,7 +1081,7 @@ export function HomeScreen({ navigation }: any) {
 
               {/* Dynamic Install Code Snippet */}
               <View style={styles.codeSnippet}>
-                <Text style={styles.codeText}>npm i react-native-inapp-inspector@{npmMeta.version}</Text>
+                <Text style={styles.codeText}>npm i react-native-inapp-debugger@{npmMeta.version}</Text>
               </View>
 
               {/* Dynamic Live Metrics Strip */}
@@ -1105,7 +1105,7 @@ export function HomeScreen({ navigation }: any) {
               <View style={{ gap: 2, marginTop: 4 }}>
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Package Name</Text>
-                  <Text style={styles.infoValue}>react-native-inapp-inspector</Text>
+                  <Text style={styles.infoValue}>react-native-inapp-debugger</Text>
                 </View>
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Installed Library Version</Text>
@@ -1158,7 +1158,7 @@ export function HomeScreen({ navigation }: any) {
               <TactileButton
                 label="View Package on NPM Registry"
                 onPress={() =>
-                  openUrl('https://www.npmjs.com/package/react-native-inapp-inspector')
+                  openUrl('https://www.npmjs.com/package/react-native-inapp-debugger')
                 }
                 color="#CC3534"
                 bgColor="#CC3534"
@@ -1309,7 +1309,7 @@ export function HomeScreen({ navigation }: any) {
               </View>
               <View style={styles.codeSnippet}>
                 <Text style={styles.codeText}>
-                  {`import NetworkInspector, {\n  setupNetworkLogger\n} from 'react-native-inapp-inspector';\n\nsetupNetworkLogger();\n\nexport default function App() {\n  return <NetworkInspector />;\n}`}
+                  {`import NetworkInspector, {\n  setupNetworkLogger\n} from 'react-native-inapp-debugger';\n\nsetupNetworkLogger();\n\nexport default function App() {\n  return <NetworkInspector />;\n}`}
                 </Text>
               </View>
             </View>

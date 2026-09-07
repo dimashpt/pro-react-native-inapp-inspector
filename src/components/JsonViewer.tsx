@@ -119,7 +119,7 @@ const JsonViewer = React.memo(({
   hideTabs?: boolean;
 }) => {
   const {t} = useTranslation();
-  const [internalMode, setInternalMode] = useState<'pretty' | 'raw' | 'table'>('raw');
+  const [internalMode, setInternalMode] = useState<'pretty' | 'raw' | 'table'>('pretty');
   const mode = externalMode ?? internalMode;
 
   const setMode = (newMode: 'pretty' | 'raw' | 'table') => {
@@ -228,44 +228,46 @@ const JsonViewer = React.memo(({
       {/* ── Top Toolbar (Postman-style) ── */}
       {!hideTabs && (
         <View style={localStyles.toolbar}>
-          <SegmentedTabs
-            tabs={[
-              {
-                key: 'pretty',
-                label: t('network.jsonViewer.pretty'),
-                icon: (isActive: boolean) => (
-                  <PrettyIcon
-                    color={isActive ? AppColors.white : AppColors.slate400}
-                    size={12}
-                  />
-                ),
-              },
-              {
-                key: 'raw',
-                label: t('network.jsonViewer.raw'),
-                icon: (isActive: boolean) => (
-                  <RawIcon
-                    color={isActive ? AppColors.white : AppColors.slate400}
-                    size={12}
-                  />
-                ),
-              },
-              {
-                key: 'table',
-                label: t('network.jsonViewer.table'),
-                icon: (isActive: boolean) => (
-                  <TableIcon
-                    color={isActive ? AppColors.white : AppColors.slate400}
-                    size={12}
-                  />
-                ),
-              },
-            ]}
-            activeKey={mode}
-            onChange={key =>
-              setMode(key as 'pretty' | 'raw' | 'table')
-            }
-          />
+          <View style={{ flex: 1 }}>
+            <SegmentedTabs
+              tabs={[
+                {
+                  key: 'pretty',
+                  label: t('network.jsonViewer.pretty'),
+                  icon: (isActive: boolean) => (
+                    <PrettyIcon
+                      color={isActive ? AppColors.white : AppColors.slate400}
+                      size={12}
+                    />
+                  ),
+                },
+                {
+                  key: 'raw',
+                  label: t('network.jsonViewer.raw'),
+                  icon: (isActive: boolean) => (
+                    <RawIcon
+                      color={isActive ? AppColors.white : AppColors.slate400}
+                      size={12}
+                    />
+                  ),
+                },
+                {
+                  key: 'table',
+                  label: t('network.jsonViewer.table'),
+                  icon: (isActive: boolean) => (
+                    <TableIcon
+                      color={isActive ? AppColors.white : AppColors.slate400}
+                      size={12}
+                    />
+                  ),
+                },
+              ]}
+              activeKey={mode}
+              onChange={key =>
+                setMode(key as 'pretty' | 'raw' | 'table')
+              }
+            />
+          </View>
           <CopyButton value={data} label="JSON" />
         </View>
       )}
@@ -393,6 +395,7 @@ const localStyles = StyleSheet.create({
     borderBottomColor: AppColors.slate200,
     paddingHorizontal: 12,
     paddingVertical: 8,
+    gap: 8,
   },
   contentWrapper: {
     backgroundColor: AppColors.white,

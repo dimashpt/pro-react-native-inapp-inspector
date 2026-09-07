@@ -1439,7 +1439,6 @@ export const getRawStyles = (colors: typeof AppColors) => ({
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 8,
-    marginRight: 10,
     backgroundColor: colors.grayBackground,
     borderWidth: 1,
     borderColor: colors.dividerColor,

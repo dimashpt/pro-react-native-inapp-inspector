@@ -50,7 +50,8 @@ const TabBar = React.memo(() => {
     <View style={styles.tabBarContainer}>
       <ScrollView
         horizontal
-        showsHorizontalScrollIndicator={false}>
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ gap: 8 }}>
         {(
           [
             {

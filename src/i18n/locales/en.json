@@ -21,8 +21,6 @@
     "openInBrowserPrompt": "Are you sure you want to open this URL in your external browser?"
   },
   "header": {
-    "updateAvailableTitle": "Update Available",
-    "updateAvailableMessage": "react-native-inapp-inspector v{{version}} is available on NPM (installed: v{{installed}}).",
     "clearEverythingTitle": "Clear Everything",
     "clearEverythingMessage": "This clears all tabs — APIs, Logs, and Crash history. Continue?",
     "paramCount": "{{count}} param",

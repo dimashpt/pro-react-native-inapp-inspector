@@ -123,7 +123,6 @@ export interface PersistedSettings {
   isAutoRamLimitEnabled?: boolean;
   showConsoleLevels?: {info: boolean; warn: boolean; error: boolean};
   showDuplicateLogs?: boolean;
-  showUpdateToast?: boolean;
   isApiGroupingEnabled?: boolean;
   telemetryClientId?: string;
   telemetryLastPing?: number;
@@ -138,6 +137,7 @@ export interface NetworkInspectorProps {
   envVariables?: Record<string, any>;
   queryClient?: any;
   appIcon?: any;
+  appName?: string;
   environment?: 'DEV' | 'UAT' | 'PrePROD' | 'PROD' | 'QA' | 'Staging' | string;
   initialVisible?: boolean;
   visible?: boolean;
@@ -153,6 +153,7 @@ export interface InspectorContextValue {
   enabled: boolean;
   isEnabled: boolean;
   appIcon?: any;
+  appName?: string;
   environment?: string;
   envVariables?: Record<string, any>;
   queryClient?: any;
@@ -180,10 +181,7 @@ export interface InspectorContextValue {
   setShowHeaderInfo: React.Dispatch<React.SetStateAction<boolean>>;
   settingsPage: SettingsPage;
   setSettingsPage: React.Dispatch<React.SetStateAction<SettingsPage>>;
-  updateAvailable: boolean;
-  latestNpmVersion: string | null;
   clearAnim: Animated.Value;
-  activePulseAnim: Animated.Value;
   unreadPulseAnim: Animated.Value;
   runClearAllWithAnimation: () => void;
 
@@ -284,8 +282,6 @@ export interface InspectorContextValue {
   setIsDark: React.Dispatch<React.SetStateAction<boolean>>;
   showDuplicateLogs: boolean;
   setShowDuplicateLogs: React.Dispatch<React.SetStateAction<boolean>>;
-  showUpdateToast: boolean;
-  setShowUpdateToast: React.Dispatch<React.SetStateAction<boolean>>;
   showConsoleLevels: {info: boolean; warn: boolean; error: boolean};
   setShowConsoleLevels: React.Dispatch<
     React.SetStateAction<{info: boolean; warn: boolean; error: boolean}>

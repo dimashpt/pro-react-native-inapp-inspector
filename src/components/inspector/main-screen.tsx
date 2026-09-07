@@ -29,7 +29,6 @@ import EnvVariablesTab from './env-variables-tab';
 import ReactQueryTab from './react-query-tab';
 import DebuggingTab from './debugging-tab';
 import SettingsPanel from './settings-panel';
-import NpmUpdateToast from './npm-update-toast';
 import Toast from '../toast';
 import styles from '../../styles';
 import {AppColors} from '../../styles/app-colors';
@@ -226,9 +225,6 @@ const MainScreen = () => {
 
               {/* Bottom floating toast notification */}
               <Toast />
-
-              {/* NPM Version Update Toast with timeout progress bar */}
-              <NpmUpdateToast />
             </View>
           </View>
         </ErrorBoundary>

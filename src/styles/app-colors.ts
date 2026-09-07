@@ -1,8 +1,8 @@
 const LightColors = {
   // ─── Core (Thai Airways Royal Palette) ───
   primaryLight: '#FFFFFF',
-  purple: '#5C2D91',             // Thai Royal Purple
-  purpleShade50: '#F8F4FC',      // Orchid Silk Tint
+  purple: '#4F46E5',             // Accent — follows header bg (indigo)
+  purpleShade50: '#EEF2FF',      // Indigo Silk Tint
   offerPurple: '#9B2677',        // Thai Orchid Magenta
   grayBorderSecondary: '#E2DFEB',
   grayBackground: '#F8F7FB',     // Pearl White Surface
@@ -119,8 +119,8 @@ const LightColors = {
   purple800: '#6B21A8',
   purple900: '#581C87',
   purple50: '#FAF5FF',
-  purple100: '#F3E8FF',
-  purple200: '#E9D5FF',
+  purple100: '#E0E7FF',
+  purple200: '#C7D2FE',
   rose700: '#BE123C',
   red600: '#DC2626',
   red50: '#FFFBFB',
@@ -201,8 +201,8 @@ const LightColors = {
 
 const DarkColors = {
   primaryLight: '#1C1628',        // Thai Dark Card
-  purple: '#B68FE8',              // Luminous Thai Orchid
-  purpleShade50: '#2A1C3E',
+  purple: '#6366F1',              // Accent — follows header bg (indigo)
+  purpleShade50: '#15243B',
   offerPurple: '#F472B6',
   grayBorderSecondary: '#362C4E',
   grayBackground: '#130F1F',      // Thai Airways Midnight Sky
@@ -332,8 +332,8 @@ const DarkColors = {
   purple800: '#C084FC',
   purple900: '#A855F7',
   purple50: '#2D1B40',
-  purple100: '#3B2252',
-  purple200: '#4C2D6B',
+  purple100: '#1E1B3A',
+  purple200: '#3730A3',
   rose700: '#FB7185',
   red600: '#F87171',
   red50: '#34151B',

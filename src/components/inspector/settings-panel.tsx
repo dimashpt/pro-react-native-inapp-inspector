@@ -47,7 +47,6 @@ import {
   ForwardChevronIcon,
   ChevronDownIcon,
   NpmIcon,
-  BoltIcon,
   BrainIcon,
   SmartphoneIcon,
   DatabaseIcon,
@@ -57,7 +56,7 @@ import {
   ListTreeIcon,
 } from '../network-icons';
 import {LIB_VERSION} from '../../constants';
-import {copyToClipboard, isLocalDebugEnvironment} from '../../helpers';
+import {isLocalDebugEnvironment} from '../../helpers';
 import {showToast} from '../../helpers/toast';
 import {pruneAllLogs} from '../../helpers/memory-manager';
 
@@ -80,8 +79,6 @@ const SettingsPanel = () => {
     setModalAnimationType,
     showDuplicateLogs,
     setShowDuplicateLogs,
-    showUpdateToast,
-    setShowUpdateToast,
     showConsoleLevels,
     setShowConsoleLevels,
     resetToDefaults,
@@ -100,8 +97,6 @@ const SettingsPanel = () => {
     crashRecords,
     maxCrashLogs,
     setMaxCrashLogs,
-    updateAvailable,
-    latestNpmVersion,
     isApiGroupingEnabled,
     setIsApiGroupingEnabled,
   } = useInspector();
@@ -1628,110 +1623,6 @@ const SettingsPanel = () => {
               </View>
             </View>
 
-            {/* Section 4: Notifications & Toasts */}
-            <View
-              style={{
-                backgroundColor: AppColors.primaryLight,
-                borderRadius: 14,
-                borderWidth: 1,
-                borderColor: AppColors.grayBorderSecondary,
-                overflow: 'hidden',
-                padding: 14,
-                gap: 12,
-              }}>
-              <Text
-                style={{
-                  fontFamily: AppFonts.interBold,
-                  fontSize: 11,
-                  lineHeight: 14,
-                  color: AppColors.grayTextWeak,
-                  letterSpacing: 0.8,
-                }}>
-                NOTIFICATIONS & TOASTS
-              </Text>
-
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 10,
-                    flex: 1,
-                    marginRight: 10,
-                  }}>
-                  <View
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 8,
-                      backgroundColor: AppColors.purpleShade50,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}>
-                    <PackageIcon color={AppColors.purple} size={15} />
-                  </View>
-                  <View style={{flex: 1}}>
-                    <Text
-                      style={{
-                        fontFamily: AppFonts.interBold,
-                        fontSize: 13.5,
-                        lineHeight: 18,
-                        color: AppColors.primaryBlack,
-                      }}>
-                      NPM Update Toast
-                    </Text>
-                    <Text
-                      style={{
-                        fontFamily: AppFonts.interRegular,
-                        fontSize: 11,
-                        lineHeight: 15,
-                        color: AppColors.grayText,
-                        marginTop: 1,
-                      }}>
-                      Show a floating toast banner with countdown progress when
-                      a newer release is published on npm.
-                    </Text>
-                  </View>
-                </View>
-
-                <TouchableScale
-                  accessible={true}
-                  accessibilityRole="switch"
-                  accessibilityLabel="Toggle NPM Update Toast"
-                  accessibilityState={{checked: showUpdateToast}}
-                  onPress={() => setShowUpdateToast(prev => !prev)}
-                  style={{
-                    width: 42,
-                    height: 24,
-                    borderRadius: 12,
-                    backgroundColor: showUpdateToast
-                      ? AppColors.purple
-                      : AppColors.grayBorderSecondary,
-                    padding: 2,
-                    justifyContent: 'center',
-                    alignItems: showUpdateToast ? 'flex-end' : 'flex-start',
-                  }}>
-                  <View
-                    style={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: 10,
-                      backgroundColor: AppColors.white,
-                      shadowColor: AppColors.black,
-                      shadowOpacity: 0.18,
-                      shadowRadius: 2,
-                      shadowOffset: {width: 0, height: 1},
-                    }}
-                  />
-                </TouchableScale>
-              </View>
-            </View>
-
             {/* Section 5: NPM Package & Updates */}
             <View
               style={{
@@ -1751,7 +1642,7 @@ const SettingsPanel = () => {
                   color: AppColors.grayTextWeak,
                   letterSpacing: 0.8,
                 }}>
-                PACKAGE VERSION & UPDATES
+                PACKAGE VERSION
               </Text>
 
               <View
@@ -1780,65 +1671,15 @@ const SettingsPanel = () => {
                     <NpmIcon color="#CB3837" size={16} />
                   </View>
                   <View style={{flex: 1}}>
-                    <View
+                    <Text
                       style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 6,
+                        fontFamily: AppFonts.interBold,
+                        fontSize: 13.5,
+                        lineHeight: 18,
+                        color: AppColors.primaryBlack,
                       }}>
-                      <Text
-                        style={{
-                          fontFamily: AppFonts.interBold,
-                          fontSize: 13.5,
-                          lineHeight: 18,
-                          color: AppColors.primaryBlack,
-                        }}>
-                        v{LIB_VERSION}
-                      </Text>
-                      {updateAvailable ? (
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            gap: 3,
-                            backgroundColor: '#F59E0B20',
-                            paddingHorizontal: 6,
-                            paddingVertical: 1.5,
-                            borderRadius: 5,
-                            borderWidth: 1,
-                            borderColor: '#F59E0B60',
-                          }}>
-                          <Text
-                            style={{
-                              fontFamily: AppFonts.interBold,
-                              fontSize: 9.5,
-                              color: '#D97706',
-                            }}>
-                            v{latestNpmVersion} Available
-                          </Text>
-                          <BoltIcon size={9} color="#D97706" />
-                        </View>
-                      ) : (
-                        <View
-                          style={{
-                            backgroundColor: `${AppColors.emerald500}20`,
-                            paddingHorizontal: 6,
-                            paddingVertical: 1.5,
-                            borderRadius: 5,
-                            borderWidth: 1,
-                            borderColor: `${AppColors.emerald500}50`,
-                          }}>
-                          <Text
-                            style={{
-                              fontFamily: AppFonts.interBold,
-                              fontSize: 9.5,
-                              color: AppColors.emerald600,
-                            }}>
-                            Up to date
-                          </Text>
-                        </View>
-                      )}
-                    </View>
+                      v{LIB_VERSION}
+                    </Text>
                     <Text
                       style={{
                         fontFamily: AppFonts.interRegular,
@@ -1847,38 +1688,10 @@ const SettingsPanel = () => {
                         color: AppColors.grayText,
                         marginTop: 1,
                       }}>
-                      {updateAvailable
-                        ? `A newer version (v${latestNpmVersion}) is available on npm registry.`
-                        : 'You are running the latest version from npm registry.'}
+                      Installed from the npm registry.
                     </Text>
                   </View>
                 </View>
-
-                {updateAvailable && (
-                  <TouchableScale
-                    onPress={() => {
-                      copyToClipboard(
-                        'npm install react-native-inapp-inspector@latest',
-                        'Install Command',
-                      );
-                      showToast('Copied npm install command!');
-                    }}
-                    style={{
-                      backgroundColor: AppColors.purple,
-                      paddingVertical: 6,
-                      paddingHorizontal: 10,
-                      borderRadius: 8,
-                    }}>
-                    <Text
-                      style={{
-                        fontFamily: AppFonts.interBold,
-                        fontSize: 11,
-                        color: AppColors.white,
-                      }}>
-                      Copy Upgrade
-                    </Text>
-                  </TouchableScale>
-                )}
               </View>
             </View>
           </View>

@@ -121,7 +121,6 @@ import {
   CrashBreadcrumb,
   SearchScope,
 } from './types';
-import {LIB_VERSION} from './constants';
 
 // Stylesheet
 import {toggleGlobalTheme} from './styles';
@@ -134,6 +133,7 @@ const NetworkInspector = ({
   envVariables,
   queryClient,
   appIcon,
+  appName,
   environment,
   initialVisible = false,
   visible: controlledVisible,
@@ -333,7 +333,6 @@ const NetworkInspector = ({
   // #6 — tab the inspector opens on. Shown with a DEFAULT badge in Settings.
   const [defaultTab, setDefaultTab] = useState<ActiveTab>('apis');
   const [showDuplicateLogs, setShowDuplicateLogs] = useState<boolean>(false);
-  const [showUpdateToast, setShowUpdateToast] = useState<boolean>(true);
 
   // Synchronize runtime background listeners with active settings
   useEffect(() => {
@@ -395,7 +394,6 @@ const NetworkInspector = ({
       error: true,
     });
     setShowDuplicateLogs(false);
-    setShowUpdateToast(true);
     setIsApiGroupingEnabled(true);
     Alert.alert('Settings Reset', 'All settings have been reset to default values.');
   };
@@ -434,8 +432,6 @@ const NetworkInspector = ({
         });
       if (saved.showDuplicateLogs != null)
         setShowDuplicateLogs(saved.showDuplicateLogs);
-      if (saved.showUpdateToast != null)
-        setShowUpdateToast(saved.showUpdateToast);
       if (saved.isApiGroupingEnabled != null)
         setIsApiGroupingEnabled(saved.isApiGroupingEnabled);
       const vis = {
@@ -492,7 +488,6 @@ const NetworkInspector = ({
       isAutoRamLimitEnabled,
       showConsoleLevels,
       showDuplicateLogs,
-      showUpdateToast,
       isApiGroupingEnabled,
     });
   }, [
@@ -508,50 +503,8 @@ const NetworkInspector = ({
     isAutoRamLimitEnabled,
     showConsoleLevels,
     showDuplicateLogs,
-    showUpdateToast,
     isApiGroupingEnabled,
   ]);
-
-  // #1 — check NPM for a newer published version; surfaces an animated dot
-  // in the header next to the npm chip when an update is available.
-  const [latestNpmVersion, setLatestNpmVersion] = useState<string | null>(null);
-  const updateAvailable = useMemo(() => {
-    if (!latestNpmVersion) return false;
-    const parse = (v: string) =>
-      v
-        .replace(/^v/, '')
-        .split('.')
-        .map(n => parseInt(n, 10) || 0);
-    const cur = parse(LIB_VERSION);
-    const latest = parse(latestNpmVersion);
-    for (let i = 0; i < 3; i++) {
-      if ((latest[i] || 0) > (cur[i] || 0)) return true;
-      if ((latest[i] || 0) < (cur[i] || 0)) return false;
-    }
-    return false;
-  }, [latestNpmVersion]);
-
-  useEffect(() => {
-    // Only check for npm updates when running in local development / debug mode (__DEV__)
-    // Never show or check in production / bundled application
-    if (typeof __DEV__ === 'undefined' || !__DEV__) {
-      return;
-    }
-    let cancelled = false;
-    fetch('https://registry.npmjs.org/react-native-inapp-inspector/latest')
-      .then(res => (res.ok ? res.json() : null))
-      .then(data => {
-        if (!cancelled && data && typeof data.version === 'string') {
-          setLatestNpmVersion(data.version);
-        }
-      })
-      .catch(() => {
-        // Offline / blocked — silently skip the update check.
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
 
 
@@ -621,7 +574,6 @@ const NetworkInspector = ({
   const [newLogIds, setNewLogIds] = useState<Set<number>>(new Set());
 
   const pulseAnim = useRef(new Animated.Value(1)).current;
-  const activePulseAnim = useRef(new Animated.Value(0.4)).current;
   const unreadPulseAnim = useRef(new Animated.Value(1)).current;
   // #4 — diagonal light streak sweeping across the floating launcher
   const fabShineAnim = useRef(new Animated.Value(0)).current;
@@ -736,25 +688,6 @@ const NetworkInspector = ({
     loop.start();
     return () => loop.stop();
   }, [fabShineAnim]);
-
-  useEffect(() => {
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(activePulseAnim, {
-          toValue: 1,
-          duration: 1200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(activePulseAnim, {
-          toValue: 0.4,
-          duration: 1200,
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-    loop.start();
-    return () => loop.stop();
-  }, [activePulseAnim]);
 
   useEffect(() => {
     const loop = Animated.loop(
@@ -1517,6 +1450,7 @@ const NetworkInspector = ({
     enabled,
     isEnabled: enabled,
     appIcon,
+    appName,
     environment,
     envVariables,
     queryClient,
@@ -1542,10 +1476,7 @@ const NetworkInspector = ({
     setShowHeaderInfo,
     settingsPage,
     setSettingsPage,
-    updateAvailable,
-    latestNpmVersion,
     clearAnim,
-    activePulseAnim,
     unreadPulseAnim,
     runClearAllWithAnimation,
 
@@ -1648,8 +1579,6 @@ const NetworkInspector = ({
     setIsDark,
     showDuplicateLogs,
     setShowDuplicateLogs,
-    showUpdateToast,
-    setShowUpdateToast,
     showConsoleLevels,
     setShowConsoleLevels,
     resetToDefaults,

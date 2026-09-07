@@ -2,9 +2,7 @@ import React, {useMemo} from 'react';
 import {
   Alert,
   Animated,
-  Linking,
   Platform,
-  Pressable,
   ScrollView,
   Text,
   useWindowDimensions,
@@ -17,7 +15,6 @@ import styles from '../../styles';
 import {AppColors} from '../../styles/app-colors';
 import {AppFonts} from '../../styles/app-fonts';
 import {METHOD_COLORS} from '../../constants';
-import {LIB_VERSION} from '../../constants';
 import {Method} from '../../types';
 import {
   getStatusColor,
@@ -27,7 +24,6 @@ import {
   getAppVersionAndBuild,
 } from '../../helpers';
 import {getNativeDeviceMetrics} from '../../native/native-inspector';
-import {UpdateAvailableModal} from './update-available-modal';
 import {
   WhiteBackNavigation,
   TrashIcon,
@@ -37,26 +33,21 @@ import {
   SizeIcon,
   AppleIcon,
   AndroidIcon,
-  NpmIcon,
   ResetIcon,
-  BoltIcon,
 } from '../network-icons';
 
 const InspectorHeader = React.memo(() => {
   const {
     modalHeightPercent,
     appIcon,
+    appName,
     selected,
     setSelected,
     selectedLog,
     setSelectedLog,
     showHeaderInfo,
     setShowHeaderInfo,
-    updateAvailable,
-    latestNpmVersion,
     clearAnim,
-    activePulseAnim,
-    unreadPulseAnim,
     runClearAllWithAnimation,
     settingsPage,
     setSettingsPage,
@@ -75,7 +66,6 @@ const InspectorHeader = React.memo(() => {
   const isCompact = windowWidth < 400;
   const isTablet = windowWidth >= 600;
 
-  const [showUpdateModal, setShowUpdateModal] = React.useState<boolean>(false);
   const [appVersionString, setAppVersionString] = React.useState<string>(() => {
     return getAppVersionAndBuild().formatted;
   });
@@ -239,26 +229,6 @@ const InspectorHeader = React.memo(() => {
                     numberOfLines={1}>
                     {settingsModuleTitle}
                   </Text>
-                  {settingsPage === 'main' && (
-                    <View
-                      style={{
-                        backgroundColor: `${AppColors.white}26`,
-                        paddingHorizontal: isNarrow ? 4 : 6,
-                        paddingVertical: 1.5,
-                        borderRadius: 10,
-                        borderWidth: 1,
-                        borderColor: `${AppColors.white}20`,
-                      }}>
-                      <Text
-                        style={{
-                          fontFamily: AppFonts.interBold,
-                          fontSize: isNarrow ? 8 : 9,
-                          color: AppColors.white,
-                        }}>
-                        v{LIB_VERSION}
-                      </Text>
-                    </View>
-                  )}
                 </View>
                 <Text
                   style={{
@@ -302,7 +272,7 @@ const InspectorHeader = React.memo(() => {
                       ]}
                       numberOfLines={1}
                       ellipsizeMode="tail">
-                      {getAppName()}
+                      {appName || getAppName()}
                     </Text>
                     <View
                       style={[
@@ -327,50 +297,7 @@ const InspectorHeader = React.memo(() => {
                         {envConfig.label}
                       </Text>
                     </View>
-                    {updateAvailable && (
-                      <Pressable
-                        hitSlop={10}
-                        onPress={() => setShowUpdateModal(true)}
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          backgroundColor: '#F59E0B',
-                          borderRadius: 5,
-                          paddingHorizontal: isNarrow ? 4 : 5.5,
-                          paddingVertical: 1.5,
-                          gap: 3,
-                          shadowColor: '#F59E0B',
-                          shadowOffset: {width: 0, height: 1.5},
-                          shadowOpacity: 0.35,
-                          shadowRadius: 3,
-                          elevation: 3,
-                          flexShrink: 0,
-                        }}>
-                        <Animated.View
-                          style={{
-                            width: 5,
-                            height: 5,
-                            borderRadius: 2.5,
-                            backgroundColor: '#FFFFFF',
-                            opacity: activePulseAnim,
-                            transform: [{scale: unreadPulseAnim}],
-                          }}
-                        />
-                        {!isNarrow && (
-                          <Text
-                            style={{
-                              fontFamily: AppFonts.interBold,
-                              fontSize: 8.5,
-                              color: '#FFFFFF',
-                              letterSpacing: 0.3,
-                            }}>
-                            UPDATE
-                          </Text>
-                        )}
-                        <BoltIcon size={isNarrow ? 8 : 9} color="#FFFFFF" />
-                      </Pressable>
-                    )}
-                  </View>
+                    </View>
 
                   {/* OS & NPM Version Representation */}
                   <View
@@ -411,51 +338,6 @@ const InspectorHeader = React.memo(() => {
                         {appVersionString}
                       </Text>
                     </View>
-
-                    <Pressable
-                      onPress={() => {
-                        if (updateAvailable) {
-                          setShowUpdateModal(true);
-                        } else {
-                          Linking.openURL(
-                            'https://www.npmjs.com/package/react-native-inapp-inspector',
-                          ).catch(() => {});
-                        }
-                      }}
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        backgroundColor: `${AppColors.white}1F`,
-                        borderRadius: 5,
-                        paddingHorizontal: isNarrow ? 4.5 : 6,
-                        paddingVertical: 2,
-                        gap: 3.5,
-                        borderWidth: 1,
-                        borderColor: `${AppColors.white}2E`,
-                        flexShrink: 0,
-                      }}>
-                      <NpmIcon size={isNarrow ? 9 : 10} color="#FF6B6B" />
-                      <Text
-                        style={{
-                          fontFamily: AppFonts.interMedium,
-                          fontSize: isNarrow ? 8.5 : 9.5,
-                          color: `${AppColors.white}EB`,
-                          letterSpacing: 0.1,
-                        }}
-                        numberOfLines={1}>
-                        v{LIB_VERSION}
-                      </Text>
-                      {updateAvailable && (
-                        <Text
-                          style={{
-                            fontFamily: AppFonts.interBold,
-                            fontSize: 8.5,
-                            color: '#F59E0B',
-                          }}>
-                          ●
-                        </Text>
-                      )}
-                    </Pressable>
                   </View>
                 </View>
               </View>
@@ -812,13 +694,6 @@ const InspectorHeader = React.memo(() => {
         </View>
       </View>
       </View>
-
-    {/* Dedicated Update Available Details Modal */}
-    <UpdateAvailableModal
-      visible={showUpdateModal}
-      latestVersion={latestNpmVersion}
-      onClose={() => setShowUpdateModal(false)}
-    />
     </>
   );
 });

@@ -48,8 +48,6 @@ const InspectorHeader = React.memo(() => {
     appIcon,
     selected,
     setSelected,
-    selectedEvent,
-    setSelectedEvent,
     selectedLog,
     setSelectedLog,
     showHeaderInfo,
@@ -132,7 +130,6 @@ const InspectorHeader = React.memo(() => {
 
   const isDetailView =
     (activeTab === 'apis' && selected != null) ||
-    (activeTab === 'analytics' && selectedEvent != null) ||
     (activeTab === 'logs' && selectedLog != null) ||
     (activeTab === 'crash' && selectedCrash != null);
 
@@ -151,8 +148,6 @@ const InspectorHeader = React.memo(() => {
         return 'Bundle Analyzer';
       case 'crash':
         return 'Crash Protection';
-      case 'analytics':
-        return 'Analytics Logger';
       default:
         return 'Settings & Modules';
     }
@@ -200,7 +195,6 @@ const InspectorHeader = React.memo(() => {
                 }
                 requestAnimationFrame(() => {
                   setSelected(null);
-                  setSelectedEvent(null);
                   setSelectedLog(null);
                   setSelectedCrash(null);
                 });
@@ -573,65 +567,6 @@ const InspectorHeader = React.memo(() => {
                     )}
                   </ScrollView>
                 </View>
-              ) : activeTab === 'analytics' && selectedEvent != null ? (
-                <View style={styles.headerDetailCenter}>
-                  <View style={styles.headerDetailRow}>
-                    <View
-                      style={[
-                        styles.headerMethodBadge,
-                        {
-                          backgroundColor:
-                            selectedEvent.source === 'firebase'
-                              ? `${AppColors.firebaseOrange}4D`
-                              : `${AppColors.purple}4D`,
-                          paddingHorizontal: isNarrow ? 5 : 6,
-                          paddingVertical: isNarrow ? 2 : 3,
-                        },
-                      ]}>
-                      <Text style={[styles.headerMethodText, {fontSize: isNarrow ? 9 : 10}]}>
-                        {selectedEvent.source === 'firebase' ? 'FB' : 'MAN'}
-                      </Text>
-                    </View>
-                    <Text
-                      style={[styles.headerDetailTitle, {fontSize: isNarrow ? 13.5 : 15}]}
-                      numberOfLines={1}
-                      ellipsizeMode="middle">
-                      {selectedEvent.name}
-                    </Text>
-                  </View>
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: isNarrow ? 4 : 6,
-                      marginTop: 3,
-                      paddingVertical: 1,
-                    }}>
-                    <View
-                      style={[
-                        styles.headerStatusDot,
-                        {
-                          backgroundColor:
-                            selectedEvent.source === 'firebase'
-                              ? AppColors.firebaseOrange
-                              : AppColors.purple,
-                          width: isNarrow ? 6 : 7,
-                          height: isNarrow ? 6 : 7,
-                        },
-                      ]}
-                    />
-                    <Text style={[styles.headerSubTitle, {fontSize: isNarrow ? 10 : 11}]}>
-                      {Object.keys(selectedEvent.params).length} param
-                      {Object.keys(selectedEvent.params).length !== 1
-                        ? 's'
-                        : ''}
-                      {' · '}
-                      {selectedEvent.source}
-                    </Text>
-                  </ScrollView>
-                </View>
               ) : activeTab === 'logs' && selectedLog != null ? (
                 <View style={styles.headerDetailCenter}>
                   <View style={styles.headerDetailRow}>
@@ -802,7 +737,7 @@ const InspectorHeader = React.memo(() => {
                 onPress={() => {
                   Alert.alert(
                     'Clear Everything',
-                    'This clears all tabs — APIs, Logs, Analytics, and Crash history. Continue?',
+                    'This clears all tabs — APIs, Logs, and Crash history. Continue?',
                     [
                       {text: 'Cancel', style: 'cancel'},
                       {

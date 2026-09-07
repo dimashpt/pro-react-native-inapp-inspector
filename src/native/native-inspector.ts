@@ -382,7 +382,7 @@ export const getNativeSystemMetrics = async (): Promise<NativeSystemMetrics | nu
  * Pushes a log payload to native background worker queues for instant native page caching.
  */
 export const pushNativeLogRecord = async (
-  pageKey: 'apis' | 'logs' | 'analytics' | 'crash',
+  pageKey: 'apis' | 'logs' | 'crash',
   jsonPayload: string,
 ): Promise<boolean> => {
   if (!NativeModule || !NativeModule.pushNativeLogRecord) {
@@ -408,7 +408,7 @@ export interface NativeCachedPageResult<T = any> {
  * Delivers instantaneous 0ms page loading without blocking JS render thread.
  */
 export const fetchNativeCachedPage = async <T = any>(
-  pageKey: 'apis' | 'logs' | 'analytics' | 'crash',
+  pageKey: 'apis' | 'logs' | 'crash',
   offset: number = 0,
   limit: number = 50,
   query: string = '',

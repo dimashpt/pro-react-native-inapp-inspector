@@ -370,13 +370,11 @@ static void NativeExceptionHandler(NSException *exception) {
     double currentCalculatedFps;
     dispatch_queue_t _networkQueue;
     dispatch_queue_t _consoleQueue;
-    dispatch_queue_t _analyticsQueue;
     dispatch_queue_t _reduxQueue;
     dispatch_queue_t _crashQueue;
     dispatch_queue_t _metricsQueue;
     NSMutableArray *_nativeNetworkLogs;
     NSMutableArray *_nativeConsoleLogs;
-    NSMutableArray *_nativeAnalyticsEvents;
     NSMutableArray *_nativeCrashRecords;
 }
 
@@ -388,13 +386,11 @@ RCT_EXPORT_MODULE(NetworkInspectorModule);
         self->currentCalculatedFps = 60.0;
         self->_networkQueue = dispatch_queue_create("com.inappinspector.network", DISPATCH_QUEUE_SERIAL);
         self->_consoleQueue = dispatch_queue_create("com.inappinspector.console", DISPATCH_QUEUE_SERIAL);
-        self->_analyticsQueue = dispatch_queue_create("com.inappinspector.analytics", DISPATCH_QUEUE_SERIAL);
         self->_reduxQueue = dispatch_queue_create("com.inappinspector.redux", DISPATCH_QUEUE_SERIAL);
         self->_crashQueue = dispatch_queue_create("com.inappinspector.crash", DISPATCH_QUEUE_SERIAL);
         self->_metricsQueue = dispatch_queue_create("com.inappinspector.metrics", DISPATCH_QUEUE_SERIAL);
         self->_nativeNetworkLogs = [NSMutableArray array];
         self->_nativeConsoleLogs = [NSMutableArray array];
-        self->_nativeAnalyticsEvents = [NSMutableArray array];
         self->_nativeCrashRecords = [NSMutableArray array];
         [self installHandlers];
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -843,9 +839,6 @@ RCT_EXPORT_METHOD(pushNativeLogRecord:(NSString *)pageKey
     if ([pageKey isEqualToString:@"logs"]) {
         targetQueue = self->_consoleQueue;
         targetStore = self->_nativeConsoleLogs;
-    } else if ([pageKey isEqualToString:@"analytics"]) {
-        targetQueue = self->_analyticsQueue;
-        targetStore = self->_nativeAnalyticsEvents;
     } else if ([pageKey isEqualToString:@"crash"]) {
         targetQueue = self->_crashQueue;
         targetStore = self->_nativeCrashRecords;
@@ -895,9 +888,6 @@ RCT_EXPORT_METHOD(getNativeCachedPage:(NSString *)pageKey
     if ([pageKey isEqualToString:@"logs"]) {
         targetQueue = self->_consoleQueue;
         targetStore = self->_nativeConsoleLogs;
-    } else if ([pageKey isEqualToString:@"analytics"]) {
-        targetQueue = self->_analyticsQueue;
-        targetStore = self->_nativeAnalyticsEvents;
     } else if ([pageKey isEqualToString:@"crash"]) {
         targetQueue = self->_crashQueue;
         targetStore = self->_nativeCrashRecords;

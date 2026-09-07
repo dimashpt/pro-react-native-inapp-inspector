@@ -19,8 +19,6 @@ import NetworkTab from './network-tab';
 import NetworkDetail from './network-detail';
 import LogDetail from './log-detail';
 import ConsoleTab from './console-tab';
-import AnalyticsTab from './analytics-tab';
-import AnalyticsDetail from '../analytics-detail';
 import BundleTab from './bundle-tab';
 import PerformanceTab from './performance-tab';
 import CrashTab from './crash-tab';
@@ -44,7 +42,6 @@ const MainScreen = () => {
     closeModal,
     modalHeightPercent,
     selected,
-    selectedEvent,
     selectedLog,
     selectedCrash,
     settingsPage,
@@ -56,7 +53,6 @@ const MainScreen = () => {
 
   const isDetailActive =
     (activeTab === 'apis' && selected != null) ||
-    (activeTab === 'analytics' && selectedEvent != null) ||
     (activeTab === 'logs' && selectedLog != null) ||
     (activeTab === 'crash' && selectedCrash != null);
 
@@ -159,7 +155,6 @@ const MainScreen = () => {
                       ]}>
                       {activeTab === 'apis' && <NetworkTab />}
                       {activeTab === 'logs' && <ConsoleTab />}
-                      {activeTab === 'analytics' && <AnalyticsTab />}
                       {activeTab === 'bundle' && <BundleTab />}
                       {activeTab === 'performance' && <PerformanceTab />}
                       {activeTab === 'crash' && <CrashTab />}
@@ -192,9 +187,6 @@ const MainScreen = () => {
                         ]}>
                         {activeTab === 'apis' && selected != null && (
                           <NetworkDetail />
-                        )}
-                        {activeTab === 'analytics' && selectedEvent != null && (
-                          <AnalyticsDetail event={selectedEvent} />
                         )}
                         {activeTab === 'logs' && selectedLog != null && (
                           <LogDetail />

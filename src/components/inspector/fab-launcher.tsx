@@ -16,7 +16,6 @@ const FabLauncher = () => {
     fabShineAnim,
     unreadPulseAnim,
     logs,
-    analyticsEvents,
   } = useInspector();
 
   return (
@@ -60,7 +59,7 @@ const FabLauncher = () => {
             />
           </Animated.View>
         </View>
-        {(logs.length > 0 || analyticsEvents.length > 0) && (
+        {logs.length > 0 && (
           <Animated.View
             style={[
               styles.fabGreenDot,

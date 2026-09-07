@@ -76,40 +76,6 @@ export interface ConsoleLog {
   duplicateCount?: number;
 }
 
-export interface AnalyticsEvent {
-  id: number;
-  name: string;
-  screenName: string;
-  screenClass: string;
-  userId: string;
-  params: Record<string, any>;
-  userProperties: Record<string, any>;
-  timestamp: number;
-  source: 'firebase' | 'manual';
-  raw?: string;
-  trackingId?: string;
-  clientId?: string;
-  sessionId?: string;
-  pageTitle?: string;
-  pageLocation?: string;
-}
-
-export interface AnalyticsFilters {
-  categories: Set<string>;
-  screens: Set<string>;
-  sources: Set<string>;
-  userTypes: Set<string>;
-  timeWindow: 'all' | '1m' | '5m' | '15m' | '1h';
-  payloadComplexity: 'all' | 'none' | 'simple' | 'heavy';
-  hasRevenue: boolean;
-  hasItems: boolean;
-  hasUserProps: boolean;
-  hasParams: boolean;
-  onlyDuplicates: boolean;
-  onlyConversions: boolean;
-  sortBy: 'time_desc' | 'time_asc' | 'revenue_desc' | 'count_desc';
-}
-
 // ─── Network ──────────────────────────────────────────────────────────────────
 
 export interface NetworkLog {
@@ -153,7 +119,6 @@ export interface PersistedSettings {
   activeTab?: string;
   maxNetworkLogs?: number;
   maxConsoleLogs?: number;
-  maxAnalyticsEventsLimit?: number;
   maxCrashLogs?: number;
   isAutoRamLimitEnabled?: boolean;
   showConsoleLevels?: {info: boolean; warn: boolean; error: boolean};
@@ -209,8 +174,6 @@ export interface InspectorContextValue {
   // ─── Selection / header state ──────────────────────────────────────────────
   selected: NetworkLog | null;
   setSelected: React.Dispatch<React.SetStateAction<NetworkLog | null>>;
-  selectedEvent: AnalyticsEvent | null;
-  setSelectedEvent: React.Dispatch<React.SetStateAction<AnalyticsEvent | null>>;
   selectedLog: ConsoleLog | null;
   setSelectedLog: React.Dispatch<React.SetStateAction<ConsoleLog | null>>;
   showHeaderInfo: boolean;
@@ -302,23 +265,6 @@ export interface InspectorContextValue {
   isConsolePaused: boolean;
   setIsConsolePaused: React.Dispatch<React.SetStateAction<boolean>>;
 
-  // ─── Analytics ─────────────────────────────────────────────────────────────
-  analyticsEvents: AnalyticsEvent[];
-  filteredAnalyticsEvents: (AnalyticsEvent & {count?: number})[];
-  analyticsSearch: string;
-  setAnalyticsSearch: React.Dispatch<React.SetStateAction<string>>;
-  analyticsFilters: AnalyticsFilters;
-  setAnalyticsFilters: React.Dispatch<React.SetStateAction<AnalyticsFilters>>;
-  isAnalyticsFilterApplied: boolean;
-  resetAnalyticsFilters: () => void;
-  newEventIds: Set<number>;
-  isAnalyticsLayoutReady: boolean;
-  setIsAnalyticsLayoutReady: React.Dispatch<React.SetStateAction<boolean>>;
-  analyticsHeaderExpanded: boolean;
-  setAnalyticsHeaderExpanded: React.Dispatch<React.SetStateAction<boolean>>;
-  isAnalyticsPaused: boolean;
-  setIsAnalyticsPaused: React.Dispatch<React.SetStateAction<boolean>>;
-
   // ─── Crash ─────────────────────────────────────────────────────────────────
   crashRecords: CrashRecord[];
   setCrashRecords: React.Dispatch<React.SetStateAction<CrashRecord[]>>;
@@ -350,8 +296,6 @@ export interface InspectorContextValue {
   setMaxNetworkLogs: React.Dispatch<React.SetStateAction<number>>;
   maxConsoleLogs: number;
   setMaxConsoleLogs: React.Dispatch<React.SetStateAction<number>>;
-  maxAnalyticsEventsLimit: number;
-  setMaxAnalyticsEventsLimit: React.Dispatch<React.SetStateAction<number>>;
   isAutoRamLimitEnabled: boolean;
   setIsAutoRamLimitEnabled: React.Dispatch<React.SetStateAction<boolean>>;
   deviceFreeRamMb: number;
@@ -427,17 +371,6 @@ export interface SectionCardProps {
   children?: React.ReactNode;
 }
 
-export interface AnalyticsEventCardProps {
-  event: AnalyticsEvent & {count?: number};
-  onPress: () => void;
-  isNew?: boolean;
-  searchStr?: string;
-  isFirst: boolean;
-  isLast: boolean;
-  msSincePrev?: number;
-  showTimestamp?: boolean;
-  computedScreenName?: string;
-}
 
 export interface CodeSnippetProps {
   code: string;
@@ -462,11 +395,6 @@ export interface ConsoleLogCardProps {
 export interface JsonContent {
   header: string;
   data: any;
-}
-
-export interface AnalyticsGraphProps {
-  event: AnalyticsEvent;
-  accentColor: string;
 }
 
 export interface ErrorBoundaryProps {

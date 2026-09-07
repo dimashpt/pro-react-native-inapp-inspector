@@ -4,7 +4,6 @@
 
 export const ActiveTab = {
   Apis: 'apis',
-  Analytics: 'analytics',
   Logs: 'logs',
   Bundle: 'bundle',
   Performance: 'performance',
@@ -65,7 +64,6 @@ export const SettingsPage = {
   Main: 'main',
   Apis: 'apis',
   Logs: 'logs',
-  Analytics: 'analytics',
   Bundle: 'bundle',
   Performance: 'performance',
   Crash: 'crash',
@@ -93,7 +91,6 @@ export const LogFilter = {
   Warn: 'warn',
   Error: 'error',
   UserLog: 'user-log',
-  Analytics: 'analytics',
 } as const;
 export type LogFilter = (typeof LogFilter)[keyof typeof LogFilter];
 
@@ -104,22 +101,6 @@ export const ConsoleLogType = {
 } as const;
 export type ConsoleLogType =
   (typeof ConsoleLogType)[keyof typeof ConsoleLogType];
-
-export const AnalyticsEventSource = {
-  Firebase: 'firebase',
-  Manual: 'manual',
-} as const;
-export type AnalyticsEventSource =
-  (typeof AnalyticsEventSource)[keyof typeof AnalyticsEventSource];
-
-export const GAEventCategory = {
-  PageView: 'page_view',
-  Ecommerce: 'ecommerce',
-  System: 'system',
-  Custom: 'custom',
-} as const;
-export type GAEventCategory =
-  (typeof GAEventCategory)[keyof typeof GAEventCategory];
 
 export const StackFrameType = {
   App: 'app',

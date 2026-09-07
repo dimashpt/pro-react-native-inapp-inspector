@@ -17,7 +17,7 @@
   <a href="https://github.com/vengatmacuser/react-native-inapp-inspector"><img src="https://img.shields.io/badge/TypeScript-Ready-3178c6" alt="TypeScript" /></a>
 </p>
 
-The **zero-config, all-in-one in-app debugging overlay for React Native & Expo**. Inspect network traffic (fetch/Axios), console logs with Metro symbolicated stack traces, Firebase Analytics events, and JavaScript bundle size directly on your device or simulator with zero native setup.
+The **zero-config, all-in-one in-app debugging overlay for React Native & Expo**. Inspect network traffic (fetch/Axios), console logs with Metro symbolicated stack traces, and JavaScript bundle size directly on your device or simulator with zero native setup.
 
 > 🚀 **The modern, lightweight alternative to Flipper and Chucker** — works standalone on device, in test builds, and across standalone APKs/IPAs without desktop companion apps, cables, or open debugger ports.
 
@@ -38,7 +38,6 @@ The **zero-config, all-in-one in-app debugging overlay for React Native & Expo**
 | **Network Inspector (Fetch & Axios)** | ✅ | ✅ | ✅ |
 | **cURL & Fetch Snippet Export** | ✅ | ❌ | ⚠️ |
 | **Console Logger + Stack Traces** | ✅ (Metro Symbolicated) | ❌ | ✅ |
-| **Firebase Analytics Tracker** | ✅ | ❌ | ❌ |
 | **JS Bundle Size & Hermes Analyzer** | ✅ | ❌ | ❌ |
 | **Live Traffic Stream Freeze** | ✅ | ❌ | ❌ |
 | **Expo & Bare React Native** | ✅ | ✅ | ⚠️ |
@@ -54,8 +53,7 @@ The **zero-config, all-in-one in-app debugging overlay for React Native & Expo**
 | 🚀 **Zero-Render Inactive Mode** | High-performance architecture that eliminates background React re-renders while the inspector modal is closed, synchronizing state instantaneously upon opening. |
 | 🌐 **Network Inspector** | Intercepts `fetch` and Axios (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`). Inspect status codes, request/response headers, body JSON, duration, caller origin, and instant cURL / fetch export snippets. |
 | 🪵 **Console Logger & Stack Trace** | Captures `console.log`, `info`, `warn`, and `error`. Displays trigger file (`TSX`, `JSX`, `TS`, `JS`) & line numbers via **Metro Symbolication**, call stack frames, individual arguments inspection, and duplicate collapsing (`×N`). |
-| ⏸️ **Live Stream Pause / Resume** | Freeze incoming network requests, console logs, and analytics streams on the fly to inspect active traffic without list jumping. |
-| 📊 **Analytics Tracker** | Tracks manual events and auto-patches `@react-native-firebase/analytics` calls (`logEvent`, `logScreenView`, `setUserProperties`, and `setUserId`). |
+| ⏸️ **Live Stream Pause / Resume** | Freeze incoming network requests and console logs on the fly to inspect active traffic without list jumping. |
 | 📦 **Bundle Visualizer** | In-app JavaScript bundle size breakdown, Hermes engine bytecode metrics, visual package treemap, and integrated `react-native-bundle-visualizer` CLI. |
 | 🗄️ **Storage Inspector** | Direct inspection and live manipulation of key-value stores (`AsyncStorage`, `MMKV`). Edit values, delete keys, search, and refresh in real time. |
 | 🔐 **ENV Variables** | Live environment variable viewer for `process.env`, Expo Config, or custom objects. Sensitive key auto-masking with reveal toggles and clipboard export. |
@@ -117,7 +115,7 @@ const App = () => {
 export default App;
 ```
 
-When mounted, the inspector automatically sets up network logging, intercepts console methods, and attaches Firebase Analytics if available.
+When mounted, the inspector automatically sets up network logging and intercepts console methods.
 
 ### Early Startup Network Logging
 
@@ -231,7 +229,7 @@ flowchart TB
     subgraph React Native / JavaScript Layer
         JS_App[Host React Native App]
         JS_Bridge[Thin TS API: setupNetworkLogger / NativeInspector]
-        JS_App -->|Logs, Analytics| JS_Bridge
+        JS_App -->|Logs, Network| JS_Bridge
     end
 
     subgraph Native iOS / Android Engine
@@ -278,13 +276,11 @@ flowchart TB
   ```
 
 #### Step 5: Preserve JavaScript Backwards Compatibility
-- Keep existing JS exports (`setupNetworkLogger`, `logAnalyticsEvent`, `<NetworkInspector />`).
+- Keep existing JS exports (`setupNetworkLogger`, `<NetworkInspector />`).
 - The TS wrapper transparently forwards data into the native store:
   ```ts
-  export const logAnalyticsEvent = (name: string, params?: Record<string, any>) => {
-    if (NativeModules.NetworkInspectorModule?.logEvent) {
-      NativeModules.NetworkInspectorModule.logEvent(name, params);
-    }
+  export const setupNetworkLogger = () => {
+    // ...
   };
   ```
 
@@ -305,8 +301,6 @@ flowchart TB
 | `setupConsoleLogger()` | Function | Intercepts `console.log`, `info`, `warn`, and `error`. |
 | `clearConsoleLogs()` | Function | Clears captured console logs. |
 | `subscribeConsoleLogs(cb)` | Function | Subscribes to console log updates. |
-| `setupAnalyticsLogger(instance)` | Function | Patches a Firebase Analytics instance. |
-| `logAnalyticsEvent(name, params?, userProps?)` | Function | Logs a manual analytics event. |
 | `connectAsyncStorage(storage)` | Function | Connects `@react-native-async-storage/async-storage` instance. |
 | `connectMMKV(storage)` | Function | Connects a `react-native-mmkv` instance. |
 | `connectEnvVariables(env)` | Function | Registers environment variables for the ENV tab. |

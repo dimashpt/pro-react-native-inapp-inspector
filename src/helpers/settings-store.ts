@@ -122,7 +122,6 @@ export function getCustomStorage(): InspectorStorage | null {
 export interface RamLimitsProfile {
   maxNetworkLogs: number;
   maxConsoleLogs: number;
-  maxAnalyticsEvents: number;
   maxCrashRecords: number;
   profileName: 'High-End' | 'Standard' | 'Compact' | 'Ultra-Light';
   freeRamMb: number;
@@ -133,7 +132,6 @@ export function calculateRamBasedLimits(freeRamMb: number): RamLimitsProfile {
     return {
       maxNetworkLogs: 100,
       maxConsoleLogs: 100,
-      maxAnalyticsEvents: 75,
       maxCrashRecords: 50,
       profileName: 'High-End',
       freeRamMb,
@@ -142,7 +140,6 @@ export function calculateRamBasedLimits(freeRamMb: number): RamLimitsProfile {
     return {
       maxNetworkLogs: 100,
       maxConsoleLogs: 100,
-      maxAnalyticsEvents: 75,
       maxCrashRecords: 50,
       profileName: 'Standard',
       freeRamMb,
@@ -151,7 +148,6 @@ export function calculateRamBasedLimits(freeRamMb: number): RamLimitsProfile {
     return {
       maxNetworkLogs: 100,
       maxConsoleLogs: 100,
-      maxAnalyticsEvents: 50,
       maxCrashRecords: 25,
       profileName: 'Compact',
       freeRamMb,
@@ -160,7 +156,6 @@ export function calculateRamBasedLimits(freeRamMb: number): RamLimitsProfile {
     return {
       maxNetworkLogs: 50,
       maxConsoleLogs: 50,
-      maxAnalyticsEvents: 25,
       maxCrashRecords: 15,
       profileName: 'Ultra-Light',
       freeRamMb,

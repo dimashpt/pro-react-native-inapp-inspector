@@ -16,7 +16,7 @@
   <a href="https://github.com/vengatmacuser/react-native-inapp-inspector"><img src="https://img.shields.io/badge/TypeScript-Ready-3178c6" alt="TypeScript" /></a>
 </p>
 
-The **zero-config, all-in-one in-app debugging overlay for React Native & Expo**. Inspect network traffic (fetch/Axios), console logs with Metro symbolicated stack traces, AsyncStorage & MMKV storage, Environment Variables, React Query / TanStack Query cache, Firebase Analytics events, and native device telemetry directly on your device or simulator with zero native setup.
+The **zero-config, all-in-one in-app debugging overlay for React Native & Expo**. Inspect network traffic (fetch/Axios), console logs with Metro symbolicated stack traces, AsyncStorage & MMKV storage, Environment Variables, React Query / TanStack Query cache, and native device telemetry directly on your device or simulator with zero native setup.
 
 > 🚀 **The modern, lightweight alternative to Flipper and Chucker** — works standalone on device, in test builds, and across standalone APKs/IPAs without desktop companion apps, cables, or open debugger ports.
 
@@ -38,7 +38,6 @@ The **zero-config, all-in-one in-app debugging overlay for React Native & Expo**
   - [🗄️ Storage Inspector (AsyncStorage & MMKV)](#️-storage-inspector-asyncstorage--mmkv)
   - [🔐 Environment Variables Inspector](#-environment-variables-inspector)
   - [🔄 React Query Debugger](#-react-query-debugger)
-  - [📊 Analytics Event Tracker](#-analytics-event-tracker)
   - [⚡ Native Hardware & Memory Telemetry](#-native-hardware--memory-telemetry)
   - [🕸️ WebView Inspector](#️-webview-inspector)
   - [🛡️ Crash Protection & Error Boundary](#️-crash-protection--error-boundary)
@@ -59,7 +58,6 @@ The **zero-config, all-in-one in-app debugging overlay for React Native & Expo**
 | 🗄️ **Storage Inspector** | Direct inspection and live manipulation of key-value stores (`@react-native-async-storage/async-storage`, `react-native-mmkv`, or custom storage adapters). Edit values, delete keys, search, and refresh in real time. |
 | 🔐 **ENV Variables** | Live environment variable viewer. Displays variables from `process.env`, Expo Config, or custom environment maps. Sensitive key masking with reveal toggles, search filtering, and clipboard export. |
 | 🔄 **React Query Debugger** | Integrated TanStack Query / React Query inspector. Real-time query cache telemetry (fresh, fetching, stale, inactive, paused), query data preview, query invalidation, refetching, and cache reset controls. |
-| 📊 **Analytics Event Tracker** | Live monitoring of application analytics. Auto-patches `@react-native-firebase/analytics` (`logEvent`, `logScreenView`, `setUserProperties`, `setUserId`) and supports manual custom logging. |
 | ⚡ **Hardware Telemetry** | Low-level native Kotlin (`Android`) and Objective-C (`iOS`) telemetry: total RAM, available RAM, native heap, storage free space, battery percentage, charging state, and CPU architecture. |
 | 🕸️ **WebView Inspector** | Audit scripts, styles, resources, navigation history, and console messages running inside embedded WebViews. |
 | 🛡️ **Crash Catcher & ErrorBoundary** | Native exception and signal catcher coupled with a React Error Boundary to capture runtime exceptions with rich device diagnostics. |
@@ -305,24 +303,6 @@ connectQueryClient(queryClient);
   - 🗑️ **Reset / Remove Query**: Purge or reset the query cache for specific keys.
   - 🧹 **Clear All**: Reset or clear the entire QueryClient cache.
 
----
-
-### 📊 Analytics Event Tracker
-
-Monitor user journeys, marketing events, and funnel conversions in real time:
-
-- **Firebase Auto-Patching**: Automatically captures calls to `@react-native-firebase/analytics` (`logEvent`, `logScreenView`, `setUserProperties`, `setUserId`).
-- **Custom Event Logging**:
-
-```typescript
-import { logAnalyticsEvent } from 'react-native-inapp-inspector';
-
-logAnalyticsEvent('checkout_completed', {
-  order_id: 'ord_98765',
-  total: 49.99,
-  currency: 'USD',
-});
-```
 
 ---
 
@@ -431,7 +411,6 @@ Analyze JavaScript bundle composition to detect accidental bloat:
 | `react-native-inapp-inspector/storage` | Storage utilities, `connectAsyncStorage`, `connectMMKV`, `getStorageAdapter`. |
 | `react-native-inapp-inspector/env` | Environment variable registry, `connectEnvVariables`, `getEnvVariables`. |
 | `react-native-inapp-inspector/react-query` | React Query bridge, `connectQueryClient`, `getQueryClient`. |
-| `react-native-inapp-inspector/analytics` | Analytics interceptor, `setupAnalyticsLogger`, `logAnalyticsEvent`. |
 | `react-native-inapp-inspector/crash` | Crash catcher, `enableNativeCrashProtection`, `subscribeNativeCrashes`, `ErrorBoundary`. |
 | `react-native-inapp-inspector/performance` | Hardware metrics bridge, `getNativeDeviceMetrics`. |
 | `react-native-inapp-inspector/bundle` | JS bundle and Hermes analyzer utilities. |

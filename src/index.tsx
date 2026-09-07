@@ -27,7 +27,6 @@ import {
   getLogPageName,
   deduplicateLogs,
   getDomainColor,
-  getEventCategory,
   matchNetworkLogQuery,
   setupMemoryWarningHandler,
   pruneAllLogs,
@@ -88,16 +87,6 @@ import {
   setTelemetryEnabled,
 } from './helpers/telemetry';
 
-import {
-  subscribeAnalyticsEvents,
-  clearAnalyticsEvents,
-  autoSetupAnalyticsLogger,
-  isAnalyticsConnected,
-  setAnalyticsModuleEnabled,
-  setMaxAnalyticsLogsLimit,
-} from './hooks/analytics-logger';
-
-
 import {setPerformanceModuleEnabled} from './hooks/performance-tracker';
 import {setBundleModuleEnabled} from './hooks/bundle-analyzer';
 import {
@@ -126,8 +115,6 @@ import {
   SettingsSubTab,
   ConsoleLog,
   Method,
-  AnalyticsEvent,
-  AnalyticsFilters,
   NetworkInspectorProps,
   CrashRecord,
   ParsedStackFrame,
@@ -218,10 +205,8 @@ const NetworkInspector = ({
   const [showReqDiff, setShowReqDiff] = useState<boolean>(false);
   const [showResDiff, setShowResDiff] = useState<boolean>(false);
 
-  // ─── Analytics state ───────────────────────────────────────────────────────
   const [activeTab, setActiveTab] = useState<ActiveTab>('apis');
   const hasUserChangedTabRef = useRef<boolean>(false);
-  const [analyticsEvents, setAnalyticsEvents] = useState<AnalyticsEvent[]>([]);
 
   // ─── Logs state ────────────────────────────────────────────────────────────
   const [consoleLogs, setConsoleLogs] = useState<ConsoleLog[]>([]);
@@ -244,11 +229,6 @@ const NetworkInspector = ({
   const isConsolePausedRef = useRef(isConsolePaused);
   isConsolePausedRef.current = isConsolePaused;
   const latestConsoleLogsRef = useRef<ConsoleLog[]>([]);
-
-  const [isAnalyticsPaused, setIsAnalyticsPaused] = useState<boolean>(false);
-  const isAnalyticsPausedRef = useRef(isAnalyticsPaused);
-  isAnalyticsPausedRef.current = isAnalyticsPaused;
-  const latestAnalyticsEventsRef = useRef<AnalyticsEvent[]>([]);
 
   const [lastReadLogsCount, setLastReadLogsCount] = useState(0);
   const [lastReadApisCount, setLastReadApisCount] = useState(0);
@@ -319,7 +299,7 @@ const NetworkInspector = ({
   }, [consoleLogs, showConsoleLevels, maxConsoleLogs]);
   const [logSearch, setLogSearch] = useState('');
   const [logFilters, setLogFilters] = useState<
-    Set<'all' | 'info' | 'warn' | 'error' | 'user-log' | 'analytics'>
+    Set<'all' | 'info' | 'warn' | 'error' | 'user-log'>
   >(new Set(['all']));
 
   // ─── Settings state ──────────────────────────────────────────────────────────
@@ -327,7 +307,6 @@ const NetworkInspector = ({
     | 'main'
     | 'apis'
     | 'logs'
-    | 'analytics'
     | null
   >(null);
   const [settingsActiveSubTab, setSettingsActiveSubTab] = useState<SettingsSubTab>('module');
@@ -336,7 +315,6 @@ const NetworkInspector = ({
   >({
     apis: true,
     logs: true,
-    analytics: false,
     bundle: false,
     performance: false,
     crash: false,
@@ -348,7 +326,6 @@ const NetworkInspector = ({
   });
 
   const [maxNetworkLogs, setMaxNetworkLogs] = useState<number>(100);
-  const [maxAnalyticsEventsLimit, setMaxAnalyticsEventsLimit] = useState<number>(75);
   const [isAutoRamLimitEnabled, setIsAutoRamLimitEnabled] = useState<boolean>(true);
   const [deviceFreeRamMb, setDeviceFreeRamMb] = useState<number>(1800);
 
@@ -362,7 +339,6 @@ const NetworkInspector = ({
   useEffect(() => {
     setNetworkModuleEnabled(!!tabVisibility.apis);
     setConsoleModuleEnabled(!!tabVisibility.logs);
-    setAnalyticsModuleEnabled(!!tabVisibility.analytics);
     setPerformanceModuleEnabled(!!tabVisibility.performance);
     setCrashModuleEnabled(!!tabVisibility.crash);
     setBundleModuleEnabled(!!tabVisibility.bundle);
@@ -380,7 +356,6 @@ const NetworkInspector = ({
             const profile = calculateRamBasedLimits(freeMb);
             setMaxNetworkLogs(profile.maxNetworkLogs);
             setMaxConsoleLogs(profile.maxConsoleLogs);
-            setMaxAnalyticsEventsLimit(profile.maxAnalyticsEvents);
             setMaxCrashLogs(profile.maxCrashRecords);
           }
         }
@@ -397,7 +372,6 @@ const NetworkInspector = ({
     setTabVisibility({
       apis: true,
       logs: true,
-      analytics: false,
       bundle: false,
       performance: false,
       crash: false,
@@ -415,7 +389,6 @@ const NetworkInspector = ({
     setMaxCrashLogs(profile.maxCrashRecords);
     setMaxNetworkLogs(profile.maxNetworkLogs);
     setMaxConsoleLogs(profile.maxConsoleLogs);
-    setMaxAnalyticsEventsLimit(profile.maxAnalyticsEvents);
     setShowConsoleLevels({
       info: true,
       warn: true,
@@ -452,8 +425,6 @@ const NetworkInspector = ({
         setIsAutoRamLimitEnabled(saved.isAutoRamLimitEnabled);
       if (saved.maxNetworkLogs != null) setMaxNetworkLogs(saved.maxNetworkLogs);
       if (saved.maxConsoleLogs != null) setMaxConsoleLogs(saved.maxConsoleLogs);
-      if (saved.maxAnalyticsEventsLimit != null)
-        setMaxAnalyticsEventsLimit(saved.maxAnalyticsEventsLimit);
       if (saved.maxCrashLogs != null) setMaxCrashLogs(saved.maxCrashLogs);
       if (saved.showConsoleLevels)
         setShowConsoleLevels({
@@ -471,7 +442,6 @@ const NetworkInspector = ({
         ...{
           apis: true,
           logs: true,
-          analytics: false,
           bundle: false,
           performance: false,
           crash: false,
@@ -489,8 +459,7 @@ const NetworkInspector = ({
         | undefined;
       if (
         tabToRestore &&
-        vis[tabToRestore] &&
-        (tabToRestore !== 'analytics' || isAnalyticsConnected())
+        vis[tabToRestore]
       ) {
         if (!hasUserChangedTabRef.current) {
           setActiveTab(tabToRestore);
@@ -519,7 +488,6 @@ const NetworkInspector = ({
       activeTab,
       maxNetworkLogs,
       maxConsoleLogs,
-      maxAnalyticsEventsLimit,
       maxCrashLogs,
       isAutoRamLimitEnabled,
       showConsoleLevels,
@@ -536,7 +504,6 @@ const NetworkInspector = ({
     activeTab,
     maxNetworkLogs,
     maxConsoleLogs,
-    maxAnalyticsEventsLimit,
     maxCrashLogs,
     isAutoRamLimitEnabled,
     showConsoleLevels,
@@ -587,16 +554,10 @@ const NetworkInspector = ({
   }, []);
 
 
-  // Auto-unselect Analytics tab if module is not connected / available
-  useEffect(() => {
-    if (activeTab === 'analytics' && !isAnalyticsConnected()) {
-      setActiveTab('apis');
-    }
-  }, [activeTab]);
+
 
   const toggleTabVisibility = (key: ActiveTab) => {
     if (key === 'apis') return;
-    if (key === 'analytics' && !isAnalyticsConnected()) return;
     setTabVisibility(prev => {
       const nextVal = !prev[key];
       const newVisibility = {...prev, [key]: nextVal};
@@ -613,23 +574,20 @@ const NetworkInspector = ({
   };
 
   const loadNativePage = useCallback(async (tabKey: ActiveTab, query: string = '') => {
-    if (tabKey === 'apis' || tabKey === 'logs' || tabKey === 'analytics' || tabKey === 'crash') {
+    if (tabKey === 'apis' || tabKey === 'logs' || tabKey === 'crash') {
       const pageData = await fetchNativeCachedPage(tabKey, 0, 100, query);
       if (pageData && pageData.items && pageData.items.length > 0) {
         if (tabKey === 'apis') setLogs(pageData.items);
         else if (tabKey === 'logs') setConsoleLogs(pageData.items);
-        else if (tabKey === 'analytics') setAnalyticsEvents(pageData.items);
         else if (tabKey === 'crash') setCrashRecords(pageData.items);
       }
     }
   }, []);
 
   const switchActiveTab = useCallback((key: ActiveTab) => {
-    if (key === 'analytics' && !isAnalyticsConnected()) return;
     hasUserChangedTabRef.current = true;
 
     setSelected(null);
-    setSelectedEvent(null);
     setSelectedLog(null);
     setSelectedCrash(null);
 
@@ -643,67 +601,6 @@ const NetworkInspector = ({
       loadNativePage(key);
     }
   }, [loadNativePage]);
-
-  const [selectedEvent, setSelectedEvent] = useState<AnalyticsEvent | null>(
-    null,
-  );
-  const [analyticsSearch, setAnalyticsSearch] = useState('');
-  const [analyticsFilters, setAnalyticsFilters] = useState<AnalyticsFilters>({
-    categories: new Set(['all']),
-    screens: new Set(),
-    sources: new Set(['all']),
-    userTypes: new Set(['all']),
-    timeWindow: 'all',
-    payloadComplexity: 'all',
-    hasRevenue: false,
-    hasItems: false,
-    hasUserProps: false,
-    hasParams: false,
-    onlyDuplicates: false,
-    onlyConversions: false,
-    sortBy: 'time_desc',
-  });
-
-  const isAnalyticsFilterApplied = useMemo(() => {
-    if (analyticsFilters.categories.size > 0 && !analyticsFilters.categories.has('all')) return true;
-    if (analyticsFilters.screens.size > 0) return true;
-    if (analyticsFilters.sources.size > 0 && !analyticsFilters.sources.has('all')) return true;
-    if (analyticsFilters.userTypes.size > 0 && !analyticsFilters.userTypes.has('all')) return true;
-    if (analyticsFilters.timeWindow !== 'all') return true;
-    if (analyticsFilters.payloadComplexity !== 'all') return true;
-    if (analyticsFilters.hasRevenue) return true;
-    if (analyticsFilters.hasItems) return true;
-    if (analyticsFilters.hasUserProps) return true;
-    if (analyticsFilters.hasParams) return true;
-    if (analyticsFilters.onlyDuplicates) return true;
-    if (analyticsFilters.onlyConversions) return true;
-    if (analyticsFilters.sortBy !== 'time_desc') return true;
-    return false;
-  }, [analyticsFilters]);
-
-  const resetAnalyticsFilters = useCallback(() => {
-    setAnalyticsFilters({
-      categories: new Set(['all']),
-      screens: new Set(),
-      sources: new Set(['all']),
-      userTypes: new Set(['all']),
-      timeWindow: 'all',
-      payloadComplexity: 'all',
-      hasRevenue: false,
-      hasItems: false,
-      hasUserProps: false,
-      hasParams: false,
-      onlyDuplicates: false,
-      onlyConversions: false,
-      sortBy: 'time_desc',
-    });
-  }, []);
-
-  const [isAnalyticsLayoutReady, setIsAnalyticsLayoutReady] = useState(false);
-  const [analyticsHeaderExpanded, setAnalyticsHeaderExpanded] = useState(false);
-
-  const [newEventIds, setNewEventIds] = useState<Set<number>>(new Set());
-  const prevEventIdsRef = useRef<Set<number>>(new Set());
 
 
   const currentRouteRef = useRef<RouteInfo>({
@@ -898,7 +795,7 @@ const NetworkInspector = ({
     } else {
       showNativeFloatingButton().catch(() => {});
       setNativeFloatingButtonBadge(
-        logs.length > 0 || analyticsEvents.length > 0,
+        logs.length > 0,
       ).catch(() => {});
     }
 
@@ -912,7 +809,6 @@ const NetworkInspector = ({
     enabled,
     visible,
     logs.length,
-    analyticsEvents.length,
   ]);
 
   // Subscribe to native UI-thread floating button tap events
@@ -947,8 +843,7 @@ const NetworkInspector = ({
         if (!tabVisibility) return current;
         const isCurrentValid =
           current === 'apis' ||
-          (Boolean(tabVisibility[current]) &&
-            (current !== 'analytics' || isAnalyticsConnected()));
+          Boolean(tabVisibility[current]);
         if (isCurrentValid) {
           return current;
         }
@@ -965,9 +860,6 @@ const NetworkInspector = ({
       }
       if (latestConsoleLogsRef.current.length > 0) {
         setConsoleLogs(latestConsoleLogsRef.current);
-      }
-      if (latestAnalyticsEventsRef.current.length > 0) {
-        setAnalyticsEvents(latestAnalyticsEventsRef.current);
       }
       const freshCrashes = getCrashRecords();
       if (freshCrashes.length > 0) {
@@ -989,7 +881,6 @@ const NetworkInspector = ({
   useEffect(() => {
     setupNetworkLogger();
     setupConsoleLogger();
-    autoSetupAnalyticsLogger();
     setupGlobalCrashHandler();
     const cleanupMemoryWarning = setupMemoryWarningHandler();
 
@@ -1071,53 +962,6 @@ const NetworkInspector = ({
       }
     });
 
-    // ─── Analytics subscription ──────────────────────────────────────────────
-    let analyticsTimeoutId: ReturnType<typeof setTimeout>;
-    let isFirstAnalyticsCall = true;
-
-    const unsubscribeAnalytics = subscribeAnalyticsEvents(
-      (raw: AnalyticsEvent[]) => {
-        latestAnalyticsEventsRef.current = raw;
-        if (raw.length > 0) {
-          pushNativeLogRecord('analytics', JSON.stringify(raw[0]));
-        }
-        if (isAnalyticsPausedRef.current) return;
-        if (!isVisibleRef.current) return; // ZERO-RENDER INACTIVE MODE
-
-        clearTimeout(analyticsTimeoutId);
-        const updateAnalyticsState = () => {
-          const incoming = new Set(raw.map(e => e.id));
-          const freshIds = new Set<number>();
-          incoming.forEach(id => {
-            if (!prevEventIdsRef.current.has(id)) freshIds.add(id);
-          });
-          prevEventIdsRef.current = incoming;
-          if (freshIds.size > 0) {
-            freshIds.forEach(id => {
-              if (!logRouteMapRef.current.has(id + 1000000)) {
-                logRouteMapRef.current.set(
-                  id + 1000000,
-                  currentRouteRef.current,
-                );
-              }
-            });
-            setNewEventIds(freshIds);
-            setTimeout(() => setNewEventIds(new Set()), 1200);
-          }
-          setAnalyticsEvents(raw);
-        };
-
-        if (isFirstAnalyticsCall) {
-          isFirstAnalyticsCall = false;
-          const incoming = new Set(raw.map(e => e.id));
-          prevEventIdsRef.current = incoming;
-          setAnalyticsEvents(raw);
-        } else {
-          analyticsTimeoutId = setTimeout(updateAnalyticsState, 200);
-        }
-      },
-    );
-
     // ─── Console subscription ────────────────────────────────────────────────
     let consoleTimeoutId: ReturnType<typeof setTimeout>;
     let isFirstConsoleCall = true;
@@ -1145,8 +989,6 @@ const NetworkInspector = ({
     return () => {
       unsubscribe();
       clearTimeout(timeoutId);
-      unsubscribeAnalytics();
-      clearTimeout(analyticsTimeoutId);
       unsubscribeConsole();
       clearTimeout(consoleTimeoutId);
       unsubscribeCrash();
@@ -1168,12 +1010,6 @@ const NetworkInspector = ({
       setLogs(deduped);
     }
   }, [isNetworkPaused]);
-
-  useEffect(() => {
-    if (!isAnalyticsPaused && latestAnalyticsEventsRef.current.length > 0) {
-      setAnalyticsEvents(latestAnalyticsEventsRef.current);
-    }
-  }, [isAnalyticsPaused]);
 
   useEffect(() => {
     if (!isConsolePaused && latestConsoleLogsRef.current.length > 0) {
@@ -1440,190 +1276,6 @@ const NetworkInspector = ({
   const prevRequestData = prevSameRequest ? prevSameRequest.request : null;
   const prevResponseData = prevSameRequest ? prevSameRequest.response : null;
 
-  const filteredAnalyticsEvents = useMemo(() => {
-    let events = analyticsEvents;
-
-    // Search query filter
-    if (analyticsSearch && analyticsSearch.trim().length > 0) {
-      const queryTokens = analyticsSearch.trim().toLowerCase().split(/\s+/).filter(Boolean);
-      events = events.filter(e => {
-        const searchTarget = [
-          e.name || '',
-          JSON.stringify(e.params || ''),
-          JSON.stringify(e.userProperties || ''),
-          e.screenName || '',
-          e.pageTitle || '',
-          e.userId || '',
-          e.source || '',
-        ].join(' ').toLowerCase();
-
-        return queryTokens.every(token => searchTarget.includes(token));
-      });
-    }
-
-    // Category filter
-    if (analyticsFilters.categories.size > 0 && !analyticsFilters.categories.has('all')) {
-      events = events.filter(e => {
-        const cat = getEventCategory(e.name);
-        return analyticsFilters.categories.has(cat);
-      });
-    }
-
-    // Time window filter
-    if (analyticsFilters.timeWindow !== 'all') {
-      const now = Date.now();
-      const cutoff =
-        analyticsFilters.timeWindow === '1m'
-          ? now - 60 * 1000
-          : analyticsFilters.timeWindow === '5m'
-          ? now - 5 * 60 * 1000
-          : analyticsFilters.timeWindow === '15m'
-          ? now - 15 * 60 * 1000
-          : now - 60 * 60 * 1000;
-      events = events.filter(e => e.timestamp >= cutoff);
-    }
-
-    // Source filter
-    if (analyticsFilters.sources.size > 0 && !analyticsFilters.sources.has('all')) {
-      events = events.filter(e => analyticsFilters.sources.has(e.source || 'manual'));
-    }
-
-    // User identification filter
-    if (analyticsFilters.userTypes.size > 0 && !analyticsFilters.userTypes.has('all')) {
-      events = events.filter(e => {
-        const isIdentified = Boolean(e.userId && e.userId.trim() !== '');
-        if (analyticsFilters.userTypes.has('identified') && isIdentified) return true;
-        if (analyticsFilters.userTypes.has('anonymous') && !isIdentified) return true;
-        return false;
-      });
-    }
-
-    // Payload complexity filter
-    if (analyticsFilters.payloadComplexity !== 'all') {
-      if (analyticsFilters.payloadComplexity === 'none') {
-        events = events.filter(
-          e => !e.params || Object.keys(e.params).length === 0,
-        );
-      } else if (analyticsFilters.payloadComplexity === 'simple') {
-        events = events.filter(
-          e => e.params && Object.keys(e.params).length <= 3,
-        );
-      } else if (analyticsFilters.payloadComplexity === 'heavy') {
-        events = events.filter(
-          e => e.params && Object.keys(e.params).length > 3,
-        );
-      }
-    }
-
-    // Conversion / Goal events filter
-    if (analyticsFilters.onlyConversions) {
-      const CONVERSION_PATTERNS = [
-        'purchase',
-        'item_purchase',
-        'ecommerce_purchase',
-        'sign_up',
-        'login',
-        'lead',
-        'generate_lead',
-        'tutorial_complete',
-        'add_payment_info',
-        'begin_checkout',
-        'spend_virtual_currency',
-      ];
-      events = events.filter(e =>
-        CONVERSION_PATTERNS.some(pat => e.name.toLowerCase().includes(pat)),
-      );
-    }
-
-    // Screen filter
-    if (analyticsFilters.screens.size > 0) {
-      events = events.filter(e => {
-        const scr =
-          e.screenName ||
-          e.params?.firebase_screen ||
-          e.params?.screen_name ||
-          e.params?.firebase_screen_class ||
-          e.screenClass ||
-          '';
-        return analyticsFilters.screens.has(scr);
-      });
-    }
-
-    // Has Revenue filter
-    if (analyticsFilters.hasRevenue) {
-      events = events.filter(
-        e =>
-          (e.params?.value != null && !isNaN(Number(e.params.value))) ||
-          (e.params?.price != null && !isNaN(Number(e.params.price))),
-      );
-    }
-
-    // Has Items filter
-    if (analyticsFilters.hasItems) {
-      events = events.filter(
-        e => Array.isArray(e.params?.items) && e.params.items.length > 0,
-      );
-    }
-
-    // Has User Props filter
-    if (analyticsFilters.hasUserProps) {
-      events = events.filter(
-        e => e.userProperties && Object.keys(e.userProperties).length > 0,
-      );
-    }
-
-    // Has Params filter
-    if (analyticsFilters.hasParams) {
-      events = events.filter(
-        e => e.params && Object.keys(e.params).length > 0,
-      );
-    }
-
-    // Deduplication
-    const deduplicatedEvents: (AnalyticsEvent & {count?: number})[] = [];
-    for (const e of events) {
-      if (deduplicatedEvents.length === 0) {
-        deduplicatedEvents.push({...e, count: 1});
-        continue;
-      }
-      const last = deduplicatedEvents[deduplicatedEvents.length - 1];
-      if (
-        last.name === e.name &&
-        JSON.stringify(last.params) === JSON.stringify(e.params) &&
-        JSON.stringify(last.userProperties) === JSON.stringify(e.userProperties)
-      ) {
-        last.count = (last.count || 1) + 1;
-        // Point to the newest timestamp and id
-        last.timestamp = e.timestamp;
-        last.id = e.id;
-      } else {
-        deduplicatedEvents.push({...e, count: 1});
-      }
-    }
-
-    let result = deduplicatedEvents;
-
-    // Only duplicates filter
-    if (analyticsFilters.onlyDuplicates) {
-      result = result.filter(e => (e.count || 1) > 1);
-    }
-
-    // Sorting
-    if (analyticsFilters.sortBy === 'time_asc') {
-      result = [...result].sort((a, b) => a.timestamp - b.timestamp);
-    } else if (analyticsFilters.sortBy === 'revenue_desc') {
-      result = [...result].sort((a, b) => {
-        const valA = Number(a.params?.value ?? a.params?.price ?? 0);
-        const valB = Number(b.params?.value ?? b.params?.price ?? 0);
-        return valB - valA;
-      });
-    } else if (analyticsFilters.sortBy === 'count_desc') {
-      result = [...result].sort((a, b) => (b.count || 1) - (a.count || 1));
-    }
-
-    return result.slice(0, maxAnalyticsEventsLimit);
-  }, [analyticsEvents, analyticsSearch, analyticsFilters, maxAnalyticsEventsLimit]);
-
   const filteredConsoleLogs = useMemo(() => {
     let result = visibleConsoleLogs;
 
@@ -1633,11 +1285,6 @@ const NetworkInspector = ({
         if (logFilters.has(log.type)) return true;
         if (logFilters.has(log.sourceMethod as any)) return true;
         if (logFilters.has('user-log') && (log.sourceMethod === 'log' || log.type === 'info'))
-          return true;
-        if (
-          logFilters.has('analytics') &&
-          log.message?.toLowerCase().includes('[analytics error]')
-        )
           return true;
         return false;
       });
@@ -1661,7 +1308,6 @@ const NetworkInspector = ({
             if (flag === 'warn' || flag === 'warning') return log.type === 'warn';
             if (flag === 'info') return log.type === 'info';
             if (flag === 'log') return log.sourceMethod === 'log';
-            if (flag === 'analytics') return (log.message || '').toLowerCase().includes('[analytics');
           }
           if (token === 'error' || token === 'err') {
             return log.type === 'error' || searchTarget.includes(token);
@@ -1739,11 +1385,6 @@ const NetworkInspector = ({
       'user-log': `${
         searchedLogs.filter(l => l.sourceMethod === 'log').length
       }/${total}`,
-      analytics: `${
-        searchedLogs.filter(l =>
-          l.message.toLowerCase().includes('[analytics error]'),
-        ).length
-      }/${total}`,
     };
   }, [visibleConsoleLogs, logSearch]);
 
@@ -1751,7 +1392,6 @@ const NetworkInspector = ({
     animateNextLayout();
     setVisible(false);
     setSelected(null);
-    setSelectedEvent(null);
     setSelectedLog(null);
     setSelectedCrash(null);
     setSettingsPage(null);
@@ -1767,10 +1407,6 @@ const NetworkInspector = ({
     setMethodFilters(new Set());
     prevLogIdsRef.current = new Set();
     logRouteMapRef.current = new Map();
-    // Also clear analytics
-    clearAnalyticsEvents();
-    setAnalyticsEvents([]);
-    prevEventIdsRef.current = new Set();
     // Also clear console logs
     clearConsoleLogs();
     setConsoleLogs([]);
@@ -1788,26 +1424,6 @@ const NetworkInspector = ({
             onPress: () => {
               clearConsoleLogs();
               setConsoleLogs([]);
-            },
-            style: 'destructive',
-          },
-        ],
-      );
-      return;
-    }
-    if (activeTab === 'analytics') {
-      Alert.alert(
-        'Clear Analytics',
-        'Are you sure you want to clear all analytics events?',
-        [
-          {text: 'Cancel', style: 'cancel'},
-          {
-            text: 'Clear All',
-            onPress: () => {
-              clearAnalyticsEvents();
-              setAnalyticsEvents([]);
-              setSelectedEvent(null);
-              prevEventIdsRef.current = new Set();
             },
             style: 'destructive',
           },
@@ -1920,8 +1536,6 @@ const NetworkInspector = ({
     // ─── Selection / header state ───────────────────────────────────────
     selected,
     setSelected,
-    selectedEvent,
-    setSelectedEvent,
     selectedLog,
     setSelectedLog,
     showHeaderInfo,
@@ -2011,23 +1625,6 @@ const NetworkInspector = ({
     isConsolePaused,
     setIsConsolePaused,
 
-    // ─── Analytics ──────────────────────────────────────────────────────
-    analyticsEvents,
-    filteredAnalyticsEvents,
-    analyticsSearch,
-    setAnalyticsSearch,
-    analyticsFilters,
-    setAnalyticsFilters,
-    isAnalyticsFilterApplied,
-    resetAnalyticsFilters,
-    newEventIds,
-    isAnalyticsLayoutReady,
-    setIsAnalyticsLayoutReady,
-    analyticsHeaderExpanded,
-    setAnalyticsHeaderExpanded,
-    isAnalyticsPaused,
-    setIsAnalyticsPaused,
-
     // ─── Crash ───────────────────────────────────────────────────────────
     crashRecords,
     setCrashRecords,
@@ -2061,8 +1658,6 @@ const NetworkInspector = ({
     setMaxNetworkLogs,
     maxConsoleLogs,
     setMaxConsoleLogs,
-    maxAnalyticsEventsLimit,
-    setMaxAnalyticsEventsLimit,
     isAutoRamLimitEnabled,
     setIsAutoRamLimitEnabled,
     deviceFreeRamMb,
@@ -2130,17 +1725,6 @@ export {
 } from './hooks/console-logger';
 
 export {
-  setupAnalyticsLogger,
-  logAnalyticsEvent,
-  subscribeAnalyticsEvents,
-  clearAnalyticsEvents,
-  getCurrentUserProperties,
-  getCurrentUserId,
-  getDefaultEventParameters,
-  getCollectionEnabled,
-} from './hooks/analytics-logger';
-
-export {
   setupGlobalCrashHandler,
   subscribeCrashEvents,
   emitCrashEvent,
@@ -2160,13 +1744,6 @@ export {
 
 export {default as CrashTab} from './components/inspector/crash-tab';
 export {default as ErrorBoundary} from './components/error-boundary';
-
-
-export {
-  getEventCategory,
-  registerGAPlugin,
-  type GAPlugin,
-} from './helpers/ga-analytics-registry';
 
 export {
   usePerformanceTracker,
@@ -2235,13 +1812,6 @@ export {
   getMaxConsoleLogsLimit,
   pruneConsoleLogs,
 } from './hooks/console-logger';
-
-
-export {
-  setMaxAnalyticsLogsLimit,
-  getMaxAnalyticsLogsLimit,
-  pruneAnalyticsLogs,
-} from './hooks/analytics-logger';
 
 export {
   getMaxCrashLogsLimit,
@@ -2323,8 +1893,6 @@ export {
   SettingsSubTab,
   LogFilter,
   ConsoleLogType,
-  AnalyticsEventSource,
-  GAEventCategory,
   StackFrameType,
   DiffResultType,
   BundleSubTab,

@@ -31,7 +31,6 @@ class NetworkInspectorModule(private val reactContext: ReactApplicationContext) 
 
     private val networkExecutor = Executors.newSingleThreadExecutor { Thread(it, "InAppInspector-NetworkWorker") }
     private val consoleExecutor = Executors.newSingleThreadExecutor { Thread(it, "InAppInspector-ConsoleWorker") }
-    private val analyticsExecutor = Executors.newSingleThreadExecutor { Thread(it, "InAppInspector-AnalyticsWorker") }
     private val reduxExecutor = Executors.newSingleThreadExecutor { Thread(it, "InAppInspector-ReduxWorker") }
     private val crashExecutor = Executors.newSingleThreadExecutor { Thread(it, "InAppInspector-CrashWorker") }
     private val metricsExecutor = Executors.newSingleThreadExecutor { Thread(it, "InAppInspector-MetricsWorker") }
@@ -555,7 +554,6 @@ class NetworkInspectorModule(private val reactContext: ReactApplicationContext) 
 
     private val nativeNetworkLogs = java.util.Collections.synchronizedList(mutableListOf<String>())
     private val nativeConsoleLogs = java.util.Collections.synchronizedList(mutableListOf<String>())
-    private val nativeAnalyticsEvents = java.util.Collections.synchronizedList(mutableListOf<String>())
     private val nativeCrashRecords = java.util.Collections.synchronizedList(mutableListOf<String>())
 
     @ReactMethod
@@ -566,7 +564,6 @@ class NetworkInspectorModule(private val reactContext: ReactApplicationContext) 
         }
         val (executor, store) = when (pageKey) {
             "logs" -> consoleExecutor to nativeConsoleLogs
-            "analytics" -> analyticsExecutor to nativeAnalyticsEvents
             "crash" -> crashExecutor to nativeCrashRecords
             else -> networkExecutor to nativeNetworkLogs
         }
@@ -612,7 +609,6 @@ class NetworkInspectorModule(private val reactContext: ReactApplicationContext) 
     fun getNativeCachedPage(pageKey: String, offset: Int, limit: Int, query: String?, promise: Promise) {
         val (executor, store) = when (pageKey) {
             "logs" -> consoleExecutor to nativeConsoleLogs
-            "analytics" -> analyticsExecutor to nativeAnalyticsEvents
             "crash" -> crashExecutor to nativeCrashRecords
             else -> networkExecutor to nativeNetworkLogs
         }

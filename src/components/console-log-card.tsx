@@ -142,9 +142,6 @@ export const ConsoleLogCard = React.memo(function ConsoleLogCard({
   const {setSelectedLog} = useInspector();
   const {t} = useTranslation();
   const jsonContent = getJsonContent(item.message);
-  const isAnalyticsError = item.message
-    .toLowerCase()
-    .includes('[analytics error]');
   const isUserLog = item.sourceMethod === 'log';
   const parsedCaller = item.caller && item.caller !== 'Unknown'
     ? parseStackLine(item.caller, true)
@@ -154,7 +151,7 @@ export const ConsoleLogCard = React.memo(function ConsoleLogCard({
     const type = (item.type || 'log').toLowerCase();
     const method = ((item as any).sourceMethod || type).toLowerCase();
 
-    if (isAnalyticsError || type === 'error' || method === 'error') {
+    if (type === 'error' || method === 'error') {
       return {
         border: AppColors.errorColor,
         badgeBg: AppColors.errorCardBg,
@@ -427,20 +424,6 @@ export const ConsoleLogCard = React.memo(function ConsoleLogCard({
           </View>
 
           <View style={styles.footerRight}>
-            {isAnalyticsError && (
-              <View
-                style={[
-                  styles.footerBadge,
-                  {
-                    backgroundColor: `${AppColors.skyBlue}15`,
-                    borderColor: `${AppColors.skyBlue}30`,
-                  },
-                ]}>
-                <Text style={[styles.footerBadgeText, {color: AppColors.skyBlue}]}>
-                  {t('console.analyticsBadge')}
-                </Text>
-              </View>
-            )}
             {isUserLog && (
               <View
                 style={[

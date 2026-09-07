@@ -14,7 +14,6 @@ import TouchableScale from '../touchable-scale';
 import {
   SignalIcon,
   TerminalIcon,
-  AnalyticsIcon,
   PackageIcon,
   PerformanceIcon,
   CrashIcon,
@@ -25,7 +24,6 @@ import {
   ReactQueryIcon,
 } from '../network-icons';
 
-import {isAnalyticsConnected} from '../../hooks/analytics-logger';
 import {triggerNativeHaptic} from '../../native/native-inspector';
 import {isLocalDebugEnvironment} from '../../helpers';
 
@@ -36,15 +34,12 @@ const TabBar = React.memo(() => {
     tabVisibility,
     logs,
     consoleLogs,
-    analyticsEvents,
     crashRecords,
     lastReadApisCount,
     lastReadLogsCount,
     lastReadCrashesCount,
     unreadPulseAnim,
   } = useInspector();
-
-  const isAnalyticsAvail = isAnalyticsConnected();
 
   return (
     <View style={styles.tabBarContainer}>
@@ -83,12 +78,6 @@ const TabBar = React.memo(() => {
               label: 'React Query',
               count: 0,
               icon: 'reactQuery',
-            },
-            {
-              key: 'analytics',
-              label: 'Analytics',
-              count: analyticsEvents.length,
-              icon: 'analytics',
             },
             {
               key: 'bundle',
@@ -131,7 +120,6 @@ const TabBar = React.memo(() => {
               );
             }
             if (!tabVisibility?.[tab.key]) return false;
-            if (tab.key === 'analytics' && !isAnalyticsAvail) return false;
             return true;
           })
           .map(tab => {
@@ -173,9 +161,6 @@ const TabBar = React.memo(() => {
                   )}
                   {tab.icon === 'logs' && (
                     <TerminalIcon color={iconColor} size={14} />
-                  )}
-                  {tab.icon === 'analytics' && (
-                    <AnalyticsIcon color={iconColor} size={14} />
                   )}
                   {tab.icon === 'bundle' && (
                     <PackageIcon color={iconColor} size={14} />

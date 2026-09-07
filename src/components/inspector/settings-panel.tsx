@@ -23,17 +23,14 @@ import {
 } from '../../helpers/settings-store';
 import {clearNetworkLogs} from '../../hooks/network-logger';
 import {clearConsoleLogs} from '../../hooks/console-logger';
-import {clearAnalyticsEvents} from '../../hooks/analytics-logger';
 import {clearCrashRecords} from '../../hooks/crash-handler';
 import {clearCachedBundleAnalysis} from '../../hooks/bundle-analyzer';
 import {clearPerformanceEvents} from '../../hooks/performance-tracker';
-import {isAnalyticsConnected} from '../../hooks/analytics-logger';
 import {useTranslation} from '../../i18n';
 import {ActiveTab} from '../../types';
 import {
   SignalIcon,
   TerminalIcon,
-  AnalyticsIcon,
   SettingsIcon,
   SunIcon,
   MoonIcon,
@@ -91,19 +88,15 @@ const SettingsPanel = () => {
     storage,
     logs,
     consoleLogs,
-    analyticsEvents,
     maxNetworkLogs,
     setMaxNetworkLogs,
     maxConsoleLogs,
     setMaxConsoleLogs,
-    maxAnalyticsEventsLimit,
-    setMaxAnalyticsEventsLimit,
     isAutoRamLimitEnabled,
     setIsAutoRamLimitEnabled,
     deviceFreeRamMb,
     switchActiveTab,
     setSelected,
-    setSelectedEvent,
     crashRecords,
     maxCrashLogs,
     setMaxCrashLogs,
@@ -168,13 +161,6 @@ const SettingsPanel = () => {
             desc: 'Runtime exception guard, breadcrumbs & memory snapshot',
           },
           {
-            key: 'analytics',
-            label: 'Analytics Logger',
-            category: 'telemetry',
-            icon: 'analytics',
-            desc: 'Firebase & custom analytics events, user properties & params',
-          },
-          {
             key: 'device',
             label: 'Device Info',
             category: 'diagnostic',
@@ -224,7 +210,6 @@ const SettingsPanel = () => {
   >(() => ({
     apis: true,
     logs: Boolean(tabVisibility?.logs),
-    analytics: Boolean(tabVisibility?.analytics),
     bundle: Boolean(tabVisibility?.bundle),
     performance: Boolean(tabVisibility?.performance),
     crash: Boolean(tabVisibility?.crash),
@@ -240,7 +225,6 @@ const SettingsPanel = () => {
     setStagedTabVisibility({
       apis: true,
       logs: Boolean(tabVisibility?.logs),
-      analytics: Boolean(tabVisibility?.analytics),
       bundle: Boolean(tabVisibility?.bundle),
       performance: Boolean(tabVisibility?.performance),
       crash: Boolean(tabVisibility?.crash),
@@ -597,16 +581,13 @@ const SettingsPanel = () => {
             {/* Individual Module Cards with Left Checkboxes */}
             <View style={{gap: 10}}>
               {allModules.map(moduleItem => {
-                const isAnalyticsAvail = isAnalyticsConnected();
-                const isUnavailable =
-                  moduleItem.key === 'analytics' && !isAnalyticsAvail;
-                const isLocked = moduleItem.key === 'apis' || isUnavailable;
+                const isLocked = moduleItem.key === 'apis';
+                const isUnavailable = false;
                 const isChecked =
                   moduleItem.key === 'apis' ||
-                  (Boolean(
+                  Boolean(
                     stagedTabVisibility?.[moduleItem.key as ActiveTab],
-                  ) &&
-                    !isUnavailable);
+                  );
 
                 const liveStats =
                   moduleItem.key === 'apis'
@@ -621,8 +602,6 @@ const SettingsPanel = () => {
                     ? `${
                         crashRecords?.length || 0
                       } crashes recorded • Crash Guard`
-                    : moduleItem.key === 'analytics'
-                    ? `${analyticsEvents.length} events logged`
                     : '';
 
                 return (
@@ -803,16 +782,7 @@ const SettingsPanel = () => {
                               size={16}
                             />
                           )}
-                          {moduleItem.icon === 'analytics' && (
-                            <AnalyticsIcon
-                              color={
-                                isChecked
-                                  ? AppColors.purple
-                                  : AppColors.grayTextWeak
-                              }
-                              size={16}
-                            />
-                          )}
+
                           {moduleItem.icon === 'device' && (
                             <SmartphoneIcon
                               color={
@@ -2161,13 +2131,6 @@ const SettingsPanel = () => {
                       color: AppColors.sky500,
                     },
                     {
-                      label: 'Analytics',
-                      value: isAutoRamLimitEnabled
-                        ? autoRamProfile.maxAnalyticsEvents
-                        : maxAnalyticsEventsLimit,
-                      color: AppColors.purple,
-                    },
-                    {
                       label: 'Crash',
                       value: isAutoRamLimitEnabled
                         ? autoRamProfile.maxCrashRecords
@@ -2793,87 +2756,6 @@ const SettingsPanel = () => {
               Alert.alert(
                 t('common.success'),
                 t('settings.logs.consoleLogsCleared'),
-              );
-            },
-            right: (
-              <View
-                style={{
-                  paddingHorizontal: 12,
-                  paddingVertical: 6,
-                  borderRadius: 8,
-                  backgroundColor: `${AppColors.errorColor}14`,
-                  borderWidth: 1,
-                  borderColor: `${AppColors.errorColor}33`,
-                }}>
-                <Text
-                  style={{
-                    fontFamily: AppFonts.interBold,
-                    fontSize: 11,
-                    lineHeight: 14,
-                    color: AppColors.errorColor,
-                  }}>
-                  {t('common.clear')}
-                </Text>
-              </View>
-            ),
-          })}
-        </View>
-        <View style={{height: 48}} />
-      </ScrollView>
-    );
-  } else if (settingsPage === 'analytics') {
-    title = t('settings.analytics.title');
-    icon = <AnalyticsIcon color={AppColors.white} size={16} />;
-    rightInfo = t('settings.analytics.total', {count: analyticsEvents.length});
-    content = (
-      <ScrollView
-        style={{flex: 1}}
-        contentContainerStyle={{padding: 16, paddingBottom: 100, gap: 12}}>
-        <View
-          style={{
-            backgroundColor: AppColors.primaryLight,
-            padding: 16,
-            borderRadius: 14,
-            borderWidth: 1,
-            borderColor: AppColors.grayBorderSecondary,
-          }}>
-          {renderSettingRow({
-            icon: <AnalyticsIcon color={AppColors.purple} size={16} />,
-            label: t('settings.analytics.maxAnalyticsEvents'),
-            description: t('settings.analytics.maxAnalyticsEventsDescription', {
-              count: analyticsEvents.length,
-            }),
-            numericInput: {
-              value: maxAnalyticsEventsLimit,
-              onChange: setMaxAnalyticsEventsLimit,
-              min: 10,
-              max: 75,
-              placeholder: 'Enter max events (10-75)',
-            },
-            isLast: true,
-          })}
-        </View>
-        <View
-          style={{
-            backgroundColor: AppColors.primaryLight,
-            borderRadius: 14,
-            borderWidth: 1,
-            borderColor: AppColors.grayBorderSecondary,
-            padding: 16,
-          }}>
-          {renderSettingRow({
-            icon: <TrashIcon color={AppColors.errorColor} size={16} />,
-            label: t('settings.analytics.clearAnalyticsEvents'),
-            description: t(
-              'settings.analytics.clearAnalyticsEventsDescription',
-            ),
-            isLast: true,
-            onPress: () => {
-              clearAnalyticsEvents();
-              setSelectedEvent(null);
-              Alert.alert(
-                t('common.success'),
-                t('settings.analytics.analyticsEventsCleared'),
               );
             },
             right: (

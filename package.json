@@ -1,7 +1,7 @@
 {
   "name": "react-native-inapp-inspector",
   "version": "2.3.19",
-  "description": "The zero-config, all-in-one in-app debugger for React Native & Expo. Inspect Network (fetch/axios), Console logs, Stack Traces, Redux State, Firebase Analytics, and JS Bundle size directly on device.",
+  "description": "The zero-config, all-in-one in-app debugger for React Native & Expo. Inspect Network (fetch/axios), Console logs, Stack Traces, Redux State, and JS Bundle size directly on device.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vengatmacuser/react-native-inapp-inspector.git"
@@ -44,13 +44,6 @@
       "import": "./dist/esm/crash.js",
       "require": "./dist/commonjs/crash.js",
       "default": "./dist/commonjs/crash.js"
-    },
-    "./analytics": {
-      "react-native": "./dist/commonjs/analytics.js",
-      "types": "./dist/commonjs/analytics.d.ts",
-      "import": "./dist/esm/analytics.js",
-      "require": "./dist/commonjs/analytics.js",
-      "default": "./dist/commonjs/analytics.js"
     },
     "./performance": {
       "react-native": "./dist/commonjs/performance.js",

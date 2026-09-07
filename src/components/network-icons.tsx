@@ -651,22 +651,6 @@ export const WhiteBackNavigation = ({color = AppColors.white, size = 20}: IconPr
   );
 };
 
-export const AnalyticsIcon = ({
-  color = AppColors.grayTextWeak,
-  size = 14,
-}: IconProps) => {
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path
-        d="M18 20V10M12 20V4M6 20v-6"
-        stroke={color}
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </Svg>
-  );
-};
 
 export const InsightsIcon = ({
   color = AppColors.grayTextWeak,

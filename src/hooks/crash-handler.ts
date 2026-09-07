@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import {CrashRecord, ParsedStackFrame, CrashBreadcrumb} from '../types';
 import {CrashExportFormat, CrashType} from '../types/enums';
-import {addLogFromCrash} from './console-logger';
 import {
   showNativeFloatingButton,
   setNativeFloatingButtonBadge,
@@ -440,6 +439,11 @@ export const handleInterceptedCrash = (
     const timeStr = now.toLocaleTimeString();
 
     const parsedStack = parseCrashStackTrace(stackString);
+
+    // Lazy require to break the circular dependency with console-logger
+    // (console-logger.ts -> crash-handler.ts). console-logger is always fully
+    // loaded by the time a crash is intercepted at runtime.
+    const {addLogFromCrash} = require('./console-logger') as typeof import('./console-logger');
 
     const log = addLogFromCrash(
       errorObj,

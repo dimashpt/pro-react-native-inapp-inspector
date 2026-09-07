@@ -6,8 +6,6 @@ import axios from 'axios';
 import {
   subscribeNetworkLogs,
   subscribeConsoleLogs,
-  logAnalyticsEvent,
-  subscribeAnalyticsEvents,
   simulateTestCrash,
   getNativeDeviceMetrics,
   isNativeModuleAvailable,
@@ -132,17 +130,6 @@ const SvgTerminal = ({ color = '#4F46E5', size = 14 }: { color?: string; size?: 
   </Svg>
 );
 
-const SvgAnalytics = ({ color = '#0D9488', size = 14 }: { color?: string; size?: number }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-    <Path
-      d="M18 20V10M12 20V4M6 20v-6"
-      stroke={color}
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </Svg>
-);
 
 const SvgAtom = ({ color = '#7C3AED', size = 14 }: { color?: string; size?: number }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
@@ -240,7 +227,6 @@ const TactileButton = ({ label, onPress, color, bgColor, fullWidth, icon }: Tact
 interface ActivityGraphProps {
   apiCount: number;
   logCount: number;
-  analyticsCount: number;
   sidebarOpen: boolean;
   history: number[];
   status: string | null;
@@ -249,7 +235,6 @@ interface ActivityGraphProps {
 const ActivityGraphicsCard = ({
   apiCount,
   logCount,
-  analyticsCount,
   sidebarOpen,
   history,
   status,
@@ -258,10 +243,9 @@ const ActivityGraphicsCard = ({
   const chartWidth = Math.max(100, measuredWidth || SCREEN_WIDTH - 84);
   const chartHeight = 70;
 
-  const totalEvents = apiCount + logCount + analyticsCount;
+  const totalEvents = apiCount + logCount;
   const apiPct = totalEvents > 0 ? Math.round((apiCount / totalEvents) * 100) : 0;
-  const logPct = totalEvents > 0 ? Math.round((logCount / totalEvents) * 100) : 0;
-  const analyticsPct = totalEvents > 0 ? Math.max(0, 100 - apiPct - logPct) : 0;
+  const logPct = totalEvents > 0 ? Math.max(0, 100 - apiPct) : 0;
 
   // 10 chronological time bars (-18s to NOW)
   const barData = useMemo(() => {
@@ -281,7 +265,7 @@ const ActivityGraphicsCard = ({
       {/* Header: Title + Live Status Badge */}
       <View style={styles.sectionTitleRow}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <SvgAnalytics color="#4F46E5" size={15} />
+          <SvgTerminal color="#4F46E5" size={15} />
           <Text style={styles.sectionTitle}>Live Event Telemetry</Text>
         </View>
         <View style={styles.liveIndicator}>
@@ -420,14 +404,6 @@ const ActivityGraphicsCard = ({
         >
           {apiPct > 0 ? <View style={{ flex: apiPct, backgroundColor: '#4F46E5' }} /> : null}
           {logPct > 0 ? <View style={{ flex: logPct, backgroundColor: '#F59E0B' }} /> : null}
-          {analyticsPct > 0 ? (
-            <View
-              style={{
-                flex: analyticsPct,
-                backgroundColor: '#0D9488',
-              }}
-            />
-          ) : null}
           {totalEvents === 0 && <View style={{ flex: 1, backgroundColor: '#CBD5E1' }} />}
         </View>
 
@@ -474,25 +450,11 @@ const ActivityGraphicsCard = ({
                 width: 7,
                 height: 7,
                 borderRadius: 3.5,
-                backgroundColor: '#0D9488',
-              }}
-            />
-            <Text style={{ fontSize: 10, fontWeight: '700', color: '#0D9488' }}>
-              Events {analyticsPct}%
-            </Text>
-          </View>
-
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-            <View
-              style={{
-                width: 7,
-                height: 7,
-                borderRadius: 3.5,
                 backgroundColor: '#7C3AED',
               }}
             />
             <Text style={{ fontSize: 10, fontWeight: '700', color: '#7C3AED' }}>
-              {sidebarOpen ? 'Open' : 'Closed'}
+              Store: {sidebarOpen ? 'Open' : 'Closed'}
             </Text>
           </View>
         </View>
@@ -509,10 +471,6 @@ const ActivityGraphicsCard = ({
           <Text style={styles.statLbl}>Logs</Text>
         </View>
         <View style={styles.statBox}>
-          <Text style={[styles.statVal, { color: '#0D9488' }]}>{analyticsCount}</Text>
-          <Text style={styles.statLbl}>Events</Text>
-        </View>
-        <View style={styles.statBox}>
           <Text style={[styles.statVal, { color: '#7C3AED' }]}>
             {sidebarOpen ? 'Open' : 'Closed'}
           </Text>
@@ -527,7 +485,6 @@ export function HomeScreen({ navigation }: any) {
   const [activeTab, setActiveTab] = useState<'tests' | 'npm' | 'github'>('tests');
   const [apiCount, setApiCount] = useState(0);
   const [logCount, setLogCount] = useState(0);
-  const [analyticsCount, setAnalyticsCount] = useState(0);
   const [reduxState, setReduxState] = useState(mockStore.getState());
   const [lastActionStatus, setLastActionStatus] = useState<string | null>(null);
   const [activityHistory, setActivityHistory] = useState<number[]>([
@@ -636,10 +593,6 @@ export function HomeScreen({ navigation }: any) {
       setLogCount(logs.length);
       setActivityHistory(prev => [...prev.slice(-9), Math.max(2, (logs.length % 20) + 3)]);
     });
-    const unsubAnalytics = subscribeAnalyticsEvents(events => {
-      setAnalyticsCount(events.length);
-      setActivityHistory(prev => [...prev.slice(-9), Math.max(2, (events.length % 20) + 1)]);
-    });
     const unsubRedux = mockStore.subscribe(() => setReduxState(mockStore.getState()));
 
     // Initial Logs to populate stats
@@ -649,7 +602,6 @@ export function HomeScreen({ navigation }: any) {
     return () => {
       unsubNet();
       unsubConsole();
-      unsubAnalytics();
       unsubRedux();
     };
   }, []);
@@ -763,14 +715,6 @@ export function HomeScreen({ navigation }: any) {
       '[Sample] Cache refreshed for user session',
       '[Sample] Push notification permission granted',
       '[Sample] Background sync completed',
-    ];
-    const randomAnalyticsEvents = [
-      'screen_view',
-      'button_tapped',
-      'list_scrolled',
-      'session_started',
-    ];
-
     console.log(`[Sample] Firing sample-all at ${new Date().toLocaleTimeString()}`);
     console.warn('[Sample] Randomized warning: throttled API response');
     console.error('[Sample] Randomized error: timeout on retry attempt #3');
@@ -783,21 +727,6 @@ export function HomeScreen({ navigation }: any) {
     triggerAxiosDelete();
     triggerNetworkRequest();
     triggerFailedNetworkRequest();
-
-    logAnalyticsEvent(
-      randomAnalyticsEvents[Math.floor(Math.random() * randomAnalyticsEvents.length)],
-      {
-        sample_batch: 'all',
-        triggered_at: new Date().toISOString(),
-        random_value: Math.floor(Math.random() * 1000),
-      },
-    );
-    logAnalyticsEvent('item_purchase', {
-      item_id: 'prod_999',
-      item_name: 'Premium Debug Kit',
-      price: 29.99,
-      currency: 'USD',
-    });
 
     mockStore.dispatch({ type: 'TOGGLE_SIDEBAR' });
     mockStore.dispatch({ type: 'UPDATE_USER_TIME' });
@@ -879,7 +808,6 @@ export function HomeScreen({ navigation }: any) {
             <ActivityGraphicsCard
               apiCount={apiCount}
               logCount={logCount}
-              analyticsCount={analyticsCount}
               sidebarOpen={Boolean(reduxState.ui?.sidebarOpen)}
               history={activityHistory}
               status={lastActionStatus}
@@ -1011,62 +939,6 @@ export function HomeScreen({ navigation }: any) {
                   }}
                   color="#DC2626"
                   bgColor="#FEF2F2"
-                />
-              </View>
-            </View>
-
-            {/* Analytics Events */}
-            <View style={styles.panelCard}>
-              <View style={styles.panelHeaderRow}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <SvgAnalytics color="#0D9488" size={14} />
-                  <Text style={styles.panelHeader}>Analytics & GA4 Events</Text>
-                </View>
-                <Text style={styles.panelHeaderBadge}>GA4 / FIREBASE</Text>
-              </View>
-              <View style={styles.btnRow}>
-                <TactileButton
-                  label="Screen View"
-                  onPress={() => {
-                    notifyAction('Screen View Logged');
-                    console.log('[App] Logged custom analytics event: screen_view');
-                    logAnalyticsEvent('screen_view', {
-                      screen_name: 'home-screen',
-                      screen_class: 'HomeScreenComponent',
-                      viewed_at: new Date().toLocaleTimeString(),
-                    });
-                  }}
-                  color="#0284C7"
-                  bgColor="#F0F9FF"
-                />
-                <TactileButton
-                  label="Ecommerce Purchase"
-                  onPress={() => {
-                    notifyAction('Purchase Logged');
-                    console.log('[App] Logged analytics ecommerce event: item_purchase');
-                    logAnalyticsEvent(
-                      'item_purchase',
-                      {
-                        item_id: 'prod_999',
-                        item_name: 'Premium Debug Kit',
-                        price: 29.99,
-                        currency: 'USD',
-                        items: [
-                          {
-                            id: 'prod_999',
-                            name: 'Premium Debug Kit',
-                            price: 29.99,
-                          },
-                        ],
-                      },
-                      {
-                        user_tier: 'gold_member',
-                        signup_platform: 'ios_app',
-                      },
-                    );
-                  }}
-                  color="#059669"
-                  bgColor="#ECFDF5"
                 />
               </View>
             </View>
@@ -1312,10 +1184,6 @@ export function HomeScreen({ navigation }: any) {
                 <Text style={{ fontSize: 12, color: '#334155', lineHeight: 18 }}>
                   • <Text style={{ fontWeight: '700' }}>Redux Time-Travel:</Text> Dispatched action
                   timeline, slice diff viewer, and state inspection.
-                </Text>
-                <Text style={{ fontSize: 12, color: '#334155', lineHeight: 18 }}>
-                  • <Text style={{ fontWeight: '700' }}>Firebase & GA4 Analytics:</Text> Automatic
-                  screen and ecommerce event category detection.
                 </Text>
                 <Text style={{ fontSize: 12, color: '#334155', lineHeight: 18 }}>
                   • <Text style={{ fontWeight: '700' }}>Bundle & Performance Analyzer:</Text>{' '}

@@ -28,7 +28,6 @@ import {
   InfoCircleIcon,
   WarningTriangleIcon,
   ErrorCircleIcon,
-  AnalyticsIcon,
   HeaderPauseIcon,
   ChevronIcon,
 } from '../network-icons';
@@ -87,7 +86,6 @@ const ConsoleTab = React.memo(() => {
         .filter(f => f !== 'all')
         .map(f => {
           if (f === 'user-log') return 'User Log';
-          if (f === 'analytics') return 'Analytics';
           return (
             (f as string).charAt(0).toUpperCase() +
             (f as string).slice(1)
@@ -600,67 +598,6 @@ const ConsoleTab = React.memo(() => {
                         },
                       ]}>
                       {t('console.error', 'Error')} ({logCounts.error})
-                    </Text>
-                  </View>
-                </View>
-              </TouchableScale>
-            );
-          })()}
-
-          {/* Analytics Filter */}
-          {(() => {
-            const active = logFilters.has('analytics');
-            return (
-              <TouchableScale
-                onPress={() => {
-                  setLogFilters(prev => {
-                    const next = new Set(prev);
-                    next.delete('all');
-                    next.has('analytics')
-                      ? next.delete('analytics')
-                      : next.add('analytics');
-                    if (next.size === 0) next.add('all');
-                    return next;
-                  });
-                }}>
-                <View
-                  style={[
-                    styles.statusFilterChip,
-                    {
-                      backgroundColor: active ? AppColors.violet600 : AppColors.purple100,
-                      borderColor: active ? AppColors.purple700 : AppColors.purple200,
-                      borderRadius: 8,
-                      paddingHorizontal: 10,
-                      paddingVertical: 6,
-                    },
-                    active && {
-                      shadowColor: AppColors.violet600,
-                      shadowOffset: {width: 0, height: 1},
-                      shadowOpacity: 0.28,
-                      shadowRadius: 2.5,
-                      elevation: 2,
-                    },
-                  ]}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: 6,
-                    }}>
-                    <AnalyticsIcon
-                      size={13}
-                      color={active ? AppColors.white : AppColors.violet600}
-                    />
-                    <Text
-                      numberOfLines={1}
-                      style={[
-                        styles.statusFilterText,
-                        {
-                          color: active ? AppColors.white : AppColors.purpleText,
-                          fontFamily: AppFonts.interBold,
-                        },
-                      ]}>
-                      {t('console.analytics', 'Analytics')} ({logCounts.analytics})
                     </Text>
                   </View>
                 </View>

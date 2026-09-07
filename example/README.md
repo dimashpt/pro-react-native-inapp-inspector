@@ -10,7 +10,6 @@ This directory contains a complete, interactive sample application demonstrating
 - 🪵 **Console Logger & Call Stacks**: Test log levels (`log`, `warn`, `error`), multi-argument object logging, error exception stack traces, and Metro source map symbolication.
 - ⏸️ **Live Stream Pause / Resume**: Test pausing and resuming real-time traffic across API and console streams.
 - 🔄 **Redux State Inspection**: Test Redux state tree, live action dispatches, and diff tracking.
-- 📊 **Analytics Tracking**: Test custom analytics events and e-commerce purchase payloads.
 - 🛡️ **Error Boundary**: Test simulated JavaScript and native error catches.
 
 ---
@@ -48,7 +47,6 @@ The example screen provides one-tap triggers for:
 
 - **Network Requests**: `Fetch User`, `Failing Request`, `Axios GET`, `Axios POST`, `Axios PUT`, `Axios PATCH`, `Axios DELETE`.
 - **Console Events**: `Trigger Log / Warn / Error`, `Multi-Arg Log`, `Error Stack Log`.
-- **Analytics Events**: `Log Custom Event`, `Log Purchase`.
 - **Redux Actions**: `Toggle Sidebar`, `Toggle Theme`.
-- **Simulate Batch (Flood)**: `Fire Sample All` triggers a simultaneous barrage of requests, logs, analytics events, and state dispatches.
+- **Simulate Batch (Flood)**: `Fire Sample All` triggers a simultaneous barrage of requests, logs, and state dispatches.
 - **Error Boundary**: `Crash JS Component` triggers a safe Error Boundary catch.

@@ -432,18 +432,6 @@ export const isAllValuesEmpty = (obj: Record<string, any>) => {
   );
 };
 
-export const formatDateTimeToAnalytics = (ts: number): string => {
-  const d = new Date(ts);
-
-  return d?.toLocaleString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
-};
-
 export const getBundleIdentifier = (): string => {
   const RNDeviceInfo = NativeModules.RNDeviceInfo;
   if (RNDeviceInfo && typeof RNDeviceInfo.bundleId === 'string') {
@@ -954,69 +942,6 @@ export const openInVSCode = (
       });
     });
   });
-};
-
-// ─── Analytics Helpers ────────────────────────────────────────────────────────
-
-export const ANALYTICS_EVENT_PALETTE = [
-  AppColors.googleBlue,
-  AppColors.googleGreen,
-  AppColors.googlePurple,
-  AppColors.googleTeal,
-  AppColors.googleRed,
-  AppColors.googleOrange,
-  AppColors.blue700,
-  AppColors.materialGreen,
-];
-
-export const getEventColor = (name: string): string => {
-  const safeName = typeof name === 'string' ? name : String(name || '');
-  let hash = 0;
-  for (let i = 0; i < safeName.length; i++) {
-    hash = (hash * 31 + safeName.charCodeAt(i)) | 0;
-  }
-  return ANALYTICS_EVENT_PALETTE[
-    Math.abs(hash) % ANALYTICS_EVENT_PALETTE.length
-  ];
-};
-
-export {
-  getEventCategory,
-  registerGAPlugin,
-  type GAEventCategory,
-  type GAPlugin,
-} from './ga-analytics-registry';
-
-export const getCategoryColors = (category: string) => {
-  switch (category) {
-    case 'page_view':
-    case 'Page View':
-      return {
-        bg: AppColors.blueBg,
-        border: AppColors.blueBorder,
-        text: AppColors.blue800,
-      };
-    case 'ecommerce':
-    case 'Ecommerce':
-      return {
-        bg: AppColors.greenBg,
-        border: AppColors.greenBorder,
-        text: AppColors.materialGreen,
-      };
-    case 'system':
-    case 'System':
-      return {
-        bg: AppColors.greyBg,
-        border: AppColors.greyBorder,
-        text: AppColors.grey600,
-      };
-    default:
-      return {
-        bg: AppColors.purpleBg,
-        border: AppColors.purpleBorder,
-        text: AppColors.purpleText,
-      };
-  }
 };
 
 export interface RuntimeDiagnostics {

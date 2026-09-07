@@ -13,13 +13,13 @@ import {
 import {I18nextProvider, i18n} from './i18n';
 
 // Components
-import ErrorBoundary from './components/ErrorBoundary';
-import MainScreen from './components/Inspector/MainScreen';
+import ErrorBoundary from './components/error-boundary';
+import MainScreen from './components/inspector/main-screen';
 import {
   InspectorContext,
   animateNextLayout,
   InspectorContextValue,
-} from './components/Inspector/InspectorContext';
+} from './components/inspector/inspector-context';
 
 // Helpers
 import {
@@ -41,12 +41,12 @@ import {
   setCustomStorage,
   clearPersistedSettings,
   calculateRamBasedLimits,
-} from './helpers/settingsStore';
+} from './helpers/settings-store';
 import {
   getNativeSystemMetrics,
   pushNativeLogRecord,
   fetchNativeCachedPage,
-} from './native/NativeInspector';
+} from './native/native-inspector';
 
 // Network
 import {
@@ -56,7 +56,7 @@ import {
   setNetworkModuleEnabled,
   setMaxNetworkLogsLimit,
   setRouteInfoProvider,
-} from './customHooks/networkLogger';
+} from './hooks/network-logger';
 
 // Console
 import {
@@ -66,8 +66,8 @@ import {
   getConsoleLogs,
   setConsoleModuleEnabled,
   setMaxConsoleLogsLimit,
-} from './customHooks/consoleLogger';
-import {IGNORED_LOG_PREFIXES} from './customHooks/logFilters';
+} from './hooks/console-logger';
+import {IGNORED_LOG_PREFIXES} from './hooks/log-filters';
 
 // Crash Protection
 import {
@@ -81,7 +81,7 @@ import {
   parseCrashStackTrace,
   setMaxCrashLogsLimit,
   setCrashModuleEnabled,
-} from './customHooks/crashHandler';
+} from './hooks/crash-handler';
 
 import {
   trackActiveTelemetryHeartbeat,
@@ -95,11 +95,11 @@ import {
   isAnalyticsConnected,
   setAnalyticsModuleEnabled,
   setMaxAnalyticsLogsLimit,
-} from './customHooks/analyticsLogger';
+} from './hooks/analytics-logger';
 
 
-import {setPerformanceModuleEnabled} from './customHooks/performanceTracker';
-import {setBundleModuleEnabled} from './customHooks/bundleAnalyzer';
+import {setPerformanceModuleEnabled} from './hooks/performance-tracker';
+import {setBundleModuleEnabled} from './hooks/bundle-analyzer';
 import {
   showNativeFloatingButton,
   hideNativeFloatingButton,
@@ -112,7 +112,7 @@ import {
   getNativeStorageItem,
   setNativeStorageItem,
   isNativeModuleAvailable,
-} from './native/NativeInspector';
+} from './native/native-inspector';
 
 // Constants
 import {
@@ -138,8 +138,8 @@ import {LIB_VERSION} from './constants';
 
 // Stylesheet
 import {toggleGlobalTheme} from './styles';
-import {setCustomEnvVariables} from './customHooks/envInspector';
-import {connectQueryClient} from './customHooks/reactQueryInspector';
+import {setCustomEnvVariables} from './hooks/env-inspector';
+import {connectQueryClient} from './hooks/react-query-inspector';
 
 const NetworkInspector = ({
   enabled = true,
@@ -2121,13 +2121,13 @@ export {
   clearNetworkLogs,
   subscribeNetworkLogs,
   addAxiosInterceptors,
-} from './customHooks/networkLogger';
+} from './hooks/network-logger';
 
 export {
   setupConsoleLogger,
   clearConsoleLogs,
   subscribeConsoleLogs,
-} from './customHooks/consoleLogger';
+} from './hooks/console-logger';
 
 export {
   setupAnalyticsLogger,
@@ -2138,7 +2138,7 @@ export {
   getCurrentUserId,
   getDefaultEventParameters,
   getCollectionEnabled,
-} from './customHooks/analyticsLogger';
+} from './hooks/analytics-logger';
 
 export {
   setupGlobalCrashHandler,
@@ -2156,17 +2156,17 @@ export {
   recordUserActionBreadcrumb,
   computeCrashFingerprint,
   type CrashEventPayload,
-} from './customHooks/crashHandler';
+} from './hooks/crash-handler';
 
-export {default as CrashTab} from './components/Inspector/CrashTab';
-export {default as ErrorBoundary} from './components/ErrorBoundary';
+export {default as CrashTab} from './components/inspector/crash-tab';
+export {default as ErrorBoundary} from './components/error-boundary';
 
 
 export {
   getEventCategory,
   registerGAPlugin,
   type GAPlugin,
-} from './helpers/gaAnalyticsRegistry';
+} from './helpers/ga-analytics-registry';
 
 export {
   usePerformanceTracker,
@@ -2187,7 +2187,7 @@ export {
   getInitialRenderProfiles,
   getInitialPerformanceEvents,
   generateFixSnippet,
-} from './customHooks/performanceTracker';
+} from './hooks/performance-tracker';
 
 export {
   InspectLog,
@@ -2215,7 +2215,7 @@ export {
   type NativeCrashEvent,
   type FloatingButtonOptions,
   type NativeFpsMetrics,
-} from './native/NativeInspector';
+} from './native/native-inspector';
 
 export {
   setupMemoryWarningHandler,
@@ -2228,36 +2228,36 @@ export {
   setMaxNetworkLogsLimit,
   getMaxNetworkLogsLimit,
   pruneNetworkLogs,
-} from './customHooks/networkLogger';
+} from './hooks/network-logger';
 
 export {
   setMaxConsoleLogsLimit,
   getMaxConsoleLogsLimit,
   pruneConsoleLogs,
-} from './customHooks/consoleLogger';
+} from './hooks/console-logger';
 
 
 export {
   setMaxAnalyticsLogsLimit,
   getMaxAnalyticsLogsLimit,
   pruneAnalyticsLogs,
-} from './customHooks/analyticsLogger';
+} from './hooks/analytics-logger';
 
 export {
   getMaxCrashLogsLimit,
   pruneCrashRecords,
-} from './customHooks/crashHandler';
+} from './hooks/crash-handler';
 
 export {
   setMaxPerformanceEventsLimit,
   getMaxPerformanceEventsLimit,
   prunePerformanceEvents,
-} from './customHooks/performanceTracker';
+} from './hooks/performance-tracker';
 
 export {
   BrandSquareIcon,
   BrandCircleIcon,
-} from './components/NetworkIcons';
+} from './components/network-icons';
 
 export {
   connectAsyncStorage,
@@ -2272,7 +2272,7 @@ export {
   subscribeToStorageChanges,
   type StorageEntry,
   type StorageDriver,
-} from './customHooks/storageInspector';
+} from './hooks/storage-inspector';
 
 export {
   connectEnvVariables,
@@ -2287,7 +2287,7 @@ export {
   exportEnvAsJson,
   isSecretKey,
   maskSecretValue,
-} from './customHooks/envInspector';
+} from './hooks/env-inspector';
 export type {EnvEntry} from './types';
 
 export {
@@ -2309,8 +2309,8 @@ export {
   invalidateAllQueries,
   refetchAllActiveQueries,
   type QueryStatusType,
-} from './customHooks/reactQueryInspector';
-export {default as ReactQueryTab} from './components/Inspector/ReactQueryTab';
+} from './hooks/react-query-inspector';
+export {default as ReactQueryTab} from './components/inspector/react-query-tab';
 
 export {
   ActiveTab,
@@ -2340,14 +2340,14 @@ export {
   AppFonts,
   setAppFonts,
   type AppFontConfig,
-} from './styles/AppFonts';
+} from './styles/app-fonts';
 
 export {
   AppColors,
   setAppColors,
   getThemeColors,
   updateAppColorsTheme,
-} from './styles/AppColors';
+} from './styles/app-colors';
 
 export {
   t,

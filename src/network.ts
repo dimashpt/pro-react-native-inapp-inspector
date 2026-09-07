@@ -12,7 +12,7 @@ export {
   setMaxNetworkLogsLimit,
   getMaxNetworkLogsLimit,
   pruneNetworkLogs,
-} from './customHooks/networkLogger';
+} from './hooks/network-logger';
 
 export type {
   NetworkLog,

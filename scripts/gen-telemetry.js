@@ -2,9 +2,9 @@
 /**
  * Build-time script: Reads GA4 credentials from .env, obfuscates them
  * with a keyed pseudorandom keystream, and writes the encrypted
- * payloads into src/constants/telemetryConfig.ts.
+ * payloads into src/constants/telemetry-config.ts.
  *
- * The .env file and src/constants/telemetryConfig.ts are gitignored
+ * The .env file and src/constants/telemetry-config.ts are gitignored
  * (secrets never touch GitHub).
  */
 const fs = require('fs');
@@ -58,7 +58,7 @@ function encrypt(text) {
   return out.join('');
 }
 
-const outFile = path.join(__dirname, '..', 'src', 'constants', 'telemetryConfig.ts');
+const outFile = path.join(__dirname, '..', 'src', 'constants', 'telemetry-config.ts');
 
 if (measurementId && apiSecret) {
   const encMid = encrypt(measurementId);

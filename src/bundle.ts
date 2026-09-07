@@ -18,7 +18,7 @@ export {
   type HostBundlePackageItem,
   type HostBinaryComponentItem,
   type FileTypeCategory,
-} from './customHooks/bundleAnalyzer';
+} from './hooks/bundle-analyzer';
 
 export {
   BundleSubTab,

@@ -16,7 +16,7 @@ export {
   pruneCrashRecords,
   setCrashModuleEnabled,
   getCrashModuleEnabled,
-} from './customHooks/crashHandler';
+} from './hooks/crash-handler';
 
 export type {
   CrashRecord,

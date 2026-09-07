@@ -21,6 +21,6 @@ export {
   invalidateAllQueries,
   refetchAllActiveQueries,
   type QueryStatusType,
-} from './customHooks/reactQueryInspector';
-export {default as ReactQueryTab} from './components/Inspector/ReactQueryTab';
+} from './hooks/react-query-inspector';
+export {default as ReactQueryTab} from './components/inspector/react-query-tab';
 

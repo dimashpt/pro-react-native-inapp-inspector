@@ -12,7 +12,7 @@ export {
   setMaxConsoleLogsLimit,
   getMaxConsoleLogsLimit,
   pruneConsoleLogs,
-} from './customHooks/consoleLogger';
+} from './hooks/console-logger';
 
 export type {
   ConsoleLog,

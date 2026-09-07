@@ -9,7 +9,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import {showToast} from './toast';
 
 // Stylesheet
-import {AppColors} from '../styles/AppColors';
+import {AppColors} from '../styles/app-colors';
 
 // Constants
 import {DOMAIN_COLORS, DURATION_FAST_MS, DURATION_SLOW_MS} from '../constants';
@@ -22,8 +22,8 @@ import {
   JsonContent,
   StackFrameType,
 } from '../types';
-export * from './searchQueryParser';
-export * from './memoryManager';
+export * from './search-query-parser';
+export * from './memory-manager';
 
 /**
  * Returns true if running in local debug environment (connected to Metro/dev server, __DEV__ is true).
@@ -273,7 +273,7 @@ export const getLogPageName = (
       .map((s: string) => s.trim())
       .filter(Boolean);
     if (parts.length > 0) {
-      return parts[parts.length - 1]; // Leaf screen name, e.g. "HomeScreen", "ProfileScreen"
+      return parts[parts.length - 1]; // Leaf screen name, e.g. "home-screen", "ProfileScreen"
     }
     return effectiveRoute.path;
   }
@@ -985,7 +985,7 @@ export {
   registerGAPlugin,
   type GAEventCategory,
   type GAPlugin,
-} from './gaAnalyticsRegistry';
+} from './ga-analytics-registry';
 
 export const getCategoryColors = (category: string) => {
   switch (category) {

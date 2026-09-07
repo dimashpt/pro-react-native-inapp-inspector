@@ -1,7 +1,7 @@
 import {Method} from '../types';
 
 // Styles
-import {AppColors} from '../styles/AppColors';
+import {AppColors} from '../styles/app-colors';
 
 // Type Definition
 import {StatusFilter} from '../types';

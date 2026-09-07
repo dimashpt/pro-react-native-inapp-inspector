@@ -20,13 +20,13 @@ export {
   setMaxAnalyticsLogsLimit,
   getMaxAnalyticsLogsLimit,
   pruneAnalyticsLogs,
-} from './customHooks/analyticsLogger';
+} from './hooks/analytics-logger';
 
 export {
   getEventCategory,
   registerGAPlugin,
   type GAPlugin,
-} from './helpers/gaAnalyticsRegistry';
+} from './helpers/ga-analytics-registry';
 
 export type {
   AnalyticsEvent,

@@ -1,6 +1,6 @@
 import {StyleSheet, Platform} from 'react-native';
-import AppColors, {updateAppColorsTheme, getThemeColors} from './AppColors';
-import {AppFonts} from './AppFonts';
+import AppColors, {updateAppColorsTheme, getThemeColors} from './app-colors';
+import {AppFonts} from './app-fonts';
 import commonStyles, {rebuildCommonStyles} from './common';
 
 export {commonStyles};

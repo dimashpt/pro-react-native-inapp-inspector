@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
-import {AppFonts} from './AppFonts';
-import {AppColors} from './AppColors';
+import {AppFonts} from './app-fonts';
+import {AppColors} from './app-colors';
 
 // Shared styles for the Inspector UI (repeated patterns + page-level layout).
 // Built dynamically so dark-mode colors stay in sync with toggleGlobalTheme()

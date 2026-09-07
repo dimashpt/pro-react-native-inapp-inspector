@@ -1,11 +1,11 @@
 import {Platform} from 'react-native';
 import {LIB_VERSION} from '../constants/version';
-import {loadSettings, saveSettings} from './settingsStore';
+import {loadSettings, saveSettings} from './settings-store';
 import {
   ENC_MID,
   ENC_SEC,
   TELEMETRY_SALT,
-} from '../constants/telemetryConfig';
+} from '../constants/telemetry-config';
 
 // ─── Runtime Keystream Deobfuscation ────────────────────────────────────────
 

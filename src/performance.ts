@@ -31,7 +31,7 @@ export {
   type ComponentRenderProfile,
   type CoreMobileVitals,
   type PerformanceFixKey,
-} from './customHooks/performanceTracker';
+} from './hooks/performance-tracker';
 
 export {
   PerformanceSubTab,

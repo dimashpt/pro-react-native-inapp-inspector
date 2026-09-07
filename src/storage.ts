@@ -15,4 +15,4 @@ export {
   subscribeToStorageChanges,
   type StorageEntry,
   type StorageDriver,
-} from './customHooks/storageInspector';
+} from './hooks/storage-inspector';

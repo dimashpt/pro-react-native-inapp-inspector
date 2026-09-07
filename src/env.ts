@@ -15,6 +15,6 @@ export {
   exportEnvAsJson,
   isSecretKey,
   maskSecretValue,
-} from './customHooks/envInspector';
+} from './hooks/env-inspector';
 export type {EnvEntry} from './types';
 

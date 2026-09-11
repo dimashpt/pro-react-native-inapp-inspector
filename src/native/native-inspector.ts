@@ -4,7 +4,7 @@ import {
   DeviceEventEmitter,
   Platform,
 } from 'react-native';
-import NativeNetworkInspector from './native-network-inspector';
+import NativeNetworkInspector from './NativeNetworkInspector';
 
 export interface NativeDeviceMetrics {
   totalRAM?: number;

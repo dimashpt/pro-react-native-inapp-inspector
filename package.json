@@ -161,17 +161,26 @@
     "url": "https://github.com/sponsors/vengatmacuser"
   },
   "peerDependencies": {
+    "@react-native-clipboard/clipboard": ">=1.0.0",
     "@tanstack/react-query": ">=4.0.0 || >=5.0.0",
+    "expo-clipboard": ">=1.0.0",
     "react": ">=18.0.0",
     "react-native": ">=0.60.0",
     "react-native-svg": ">=12.0.0"
   },
   "peerDependenciesMeta": {
+    "@react-native-clipboard/clipboard": {
+      "optional": true
+    },
+    "expo-clipboard": {
+      "optional": true
+    },
     "@tanstack/react-query": {
       "optional": true
     }
   },
   "devDependencies": {
+    "@react-native-clipboard/clipboard": "1.16.3",
     "@tanstack/react-query": "^5.102.8",
     "@types/react": "19.1.0",
     "@types/react-native": "0.72.0",
@@ -182,8 +191,5 @@
     "react-native-bundle-visualizer": "4.0.0",
     "react-native-svg": "15.14.0",
     "typescript": "5.8.3"
-  },
-  "dependencies": {
-    "@react-native-clipboard/clipboard": "1.16.3"
   }
 }

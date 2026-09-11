@@ -5,7 +5,6 @@ import {
   NativeModules,
   Linking,
 } from 'react-native';
-import Clipboard from '@react-native-clipboard/clipboard';
 import {showToast} from './toast';
 
 // Stylesheet
@@ -111,17 +110,28 @@ export const copyToClipboard = (value: unknown, label: string): void => {
     }
   }
 
-  // Use @react-native-clipboard/clipboard npm package
+  // Try @react-native-clipboard/clipboard or expo-clipboard dynamically
+  let copied = false;
   try {
-    if (typeof Clipboard?.setString === 'function') {
-      Clipboard.setString(textToCopy);
-    } else if (typeof (Clipboard as any)?.default?.setString === 'function') {
-      (Clipboard as any).default.setString(textToCopy);
+    const RNClipboard = require('@react-native-clipboard/clipboard');
+    const clip = RNClipboard?.default || RNClipboard;
+    if (typeof clip?.setString === 'function') {
+      clip.setString(textToCopy);
+      copied = true;
     }
-  } catch (err) {
-    if (__DEV__) {
-      console.warn('[NetworkInspector] Clipboard.setString failed:', err);
-    }
+  } catch {}
+
+  if (!copied) {
+    try {
+      const ExpoClipboard = require('expo-clipboard');
+      if (typeof ExpoClipboard?.setStringAsync === 'function') {
+        ExpoClipboard.setStringAsync(textToCopy);
+        copied = true;
+      } else if (typeof ExpoClipboard?.setString === 'function') {
+        ExpoClipboard.setString(textToCopy);
+        copied = true;
+      }
+    } catch {}
   }
 
   // Trigger floating in-app bottom toast notification
